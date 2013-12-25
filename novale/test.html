@@ -1,0 +1,48 @@
+
+<script>
+function extend() {
+    var len = arguments.length;
+    var parent = (len > 1) ? arguments[0] : Function.constructor;
+    var body = arguments[len - 1];
+    body.prototype = parent.prototype;
+
+    var constructor = new body;
+    constructor._super = parent.prototype;
+    if (!constructor.hasOwnProperty("init")) return body;
+    constructor.init.prototype = constructor;
+    return constructor.init;
+}
+
+var A = extend(function (base) {
+    this.pro1 = 'pro1 ';
+    this.method1 = function() {
+        return this.pro1;
+    }
+    this.init = function(a) {
+        console.log("init1", a)
+        //this._super.init("caca")
+    }
+});
+var B = extend(A, function() {
+    this.pro2 = 'pro2 ';
+    this.init = function(a) {
+        console.log("init2", a)
+        this._super.init("caca")
+    };
+    this.method2 = function() {
+        return this.pro1 + this.pro2;
+    };
+});
+var C = extend(B, function() {
+    this.pro3 = 'pro3 ';
+    this.method3 = function() {
+        return this;
+    };
+    this.init = function(a) {
+        console.log("init3", a)
+        this._super.init("caca")
+    }
+});
+//c = new C("parameter of the constructor")
+ins=new C("parameter")
+</script>

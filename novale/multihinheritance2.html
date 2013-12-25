@@ -1,0 +1,107 @@
+<script>
+if (typeof Object.create !== "function") {
+  Object.create = (function () {
+    function F() {} // created only once
+    return function (o) {
+      F.prototype = o; // reused on each invocation
+      return new F();
+    };
+  })();}
+
+Object.prototype.extend = function (extension) {
+      var hasOwnProperty = Object.hasOwnProperty;
+      var object = Object.create(this);
+
+      for (var property in extension)
+          if (hasOwnProperty.call(extension, property) ||
+              typeof object[property] === "undefined")
+                  object[property] = extension[property];
+
+     return object;
+};
+  Function.prototype.naw = function () {
+     function functor() { return constructor.apply(this, args); }
+     var args = Array.prototype.slice.call(arguments);
+     functor.prototype = this.prototype;
+     var constructor = this;
+     return new functor;
+  };
+
+var bases = [];
+function inherit() {
+
+    var body, parent;
+    if (arguments.length == 1)
+      body = arguments[0];
+    else if (arguments.length == 2)
+    {
+      parent = arguments[0];
+      body = arguments[1];
+      body.prototype = parent.prototype;
+      bases.push(parent.prototype);
+    }
+    else if (arguments.length > 2)
+    {
+
+      parent = arguments[0];
+      parent2 = arguments[1];
+
+      body = function(){};
+      body.prototype = parent.prototype;
+      body.prototype = body.prototype.extend(parent2.prototype);
+
+      if (bases.length == 0) bases.push(parent.prototype);
+      bases.push(parent2.prototype);
+      
+
+      Array.prototype.splice.call(arguments, 0, 2, body);
+      return inherit.apply(null, arguments);
+    }
+
+    var constructor = (bases.length > 0) ? new body(parent.prototype) : new body;
+    if (bases.length > 1)
+      constructor = body.naw.apply(body, bases);
+
+    bases = [];
+    constructor.init.prototype = constructor;
+    return constructor.init;
+}
+
+var A1 = inherit(function () {
+    this.a1 = "a1";
+    this.init = function(name) {
+        console.log(this.a1)
+        this.name = name;
+    };
+});
+var A2 = inherit(A1, function (base) {
+    this.a2 = "a2";
+    this.init = function(name) {
+      console.log(this.a2)
+        base.init(name);
+    };
+});
+var A3 = inherit(function (base) {
+    this.a3 = "a3";
+    this.init = function() {
+      console.log(3)
+    };
+});
+var A4 = inherit(function (base) {
+    this.a4 = "a4";
+    this.init = function() {
+      console.log(4)
+    };
+});
+
+var B = inherit(A2,A3,A4,  function (base2, base3, base4) {
+    this.b = "b";
+    this.init = function(name) {
+        console.log(this.b, base2, base3, base4)
+        base2.init(name);
+        console.log( this.name)
+    };
+});
+
+ins = new B("Mery"); console.log(ins instanceof A1, ins instanceof A2, ins instanceof A3, ins instanceof A4, ins instanceof B, ins)
+</script>

@@ -1,0 +1,110 @@
+<script>
+var inherit3 = (function() {
+    "use strict";
+
+    var pt = "prototype", bases = [], body, parent, parent2, constructor, args, getprototype;
+
+    Function.prototype.create3 = function() {
+        function functor() { return constructor.apply(this, args); }
+        var args = Array[pt].slice.call(arguments);
+        functor[pt] = this[pt];
+        var constructor = this;
+        return new functor;
+    };
+
+    Object.prototype.extend3 = function(extension) {
+        var property, that = (typeof this === "object") ? this : this[pt];
+        for (property in extension)
+            if (typeof that[property] === "undefined") //With this line inherit is from right to left
+                that[property] = extension[property];
+
+        return that;
+    };
+
+    getprototype = function(obj) {
+        return (typeof obj === "object") ? obj : ((typeof obj[pt].init === "undefined") ? new obj : obj[pt]);
+    };
+
+    return function() {
+
+        bases = [];
+        args = arguments;
+
+        body = Array[pt].pop.call(args);
+
+        if (args.length > 0) {
+            parent = getprototype(Array[pt].shift.call(args));
+            bases.push(parent);
+            
+            if (args.length == 0) {
+                
+                body[pt] = parent;
+                
+            }         
+            else {
+                //console.log(1, parent)
+                var bodytemp = function(){};
+                bodytemp[pt] = parent;
+                for (var i in args) {
+                    var newinherit = getprototype(args[i]);
+                    if (i !== "extend") {
+                        bodytemp[pt].extend3(newinherit);
+                        bases.push(newinherit);
+                    }
+                }
+                //console.log(2, parent)
+                body[pt] = bodytemp.prototype;
+            }
+        }
+
+        if (bases.length > 1) constructor = body.create3.apply(body, bases);
+        else constructor = (bases.length == 1) ? new body(parent) : new body;
+
+        constructor.init[pt] = constructor;
+        return constructor.init;
+    };
+}());
+
+
+var A1_3 = inherit3(function () {
+    this.a1 = "a1";
+    this.init = function(name) {
+      this.name = name;
+    };
+});
+var A2_3 = inherit3(A1_3, function (base) {
+    this.a2 = "a2";
+    this.init = function(name) {
+      base.init(name);
+    };
+});
+var A3_3 = inherit3(A2_3, function (base) {
+    this.a3 = "a3";
+    this.init = function(name) {
+      base.init(name);
+    };
+});
+var A4_3 = function () {
+    this.a4 = "a4";
+    this.init = function() {
+      console.log(4)
+    };
+};
+var A5_3 = {
+    a5: "a5",
+    init: function() {
+      console.log(5);
+    }
+};
+//console.log(new A2("aa"))
+var B_3 = inherit3(A3_3,A4_3,A5_3,  function (base, base2, base3, base4, base5) {
+    var args = arguments;
+    this.b = "b";
+    this.init = function(name) {
+        base.init(name);
+        //console.log(this)
+    };
+});
+
+var ins = new B_3("Mery"); ins
+</script>

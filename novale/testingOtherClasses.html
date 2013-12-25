@@ -1,0 +1,316 @@
+<script src="http://dl.dropbox.com/u/7677927/oop-benchmark/lib/jrclass.js"></script>
+<script src="http://raptorjs.org/dist/raptor.min.js" type="text/javascript"></script>
+<script src="https://raw.github.com/dotnetwise/Javascript-FastClass/master/FastClass.js" type="text/javascript"></script>
+<script>
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function() {
+        var funcObj = this;
+        var original = funcObj;
+        var extraArgs = Array.prototype.slice.call(arguments);
+        var thisObj = extraArgs.shift();
+        var func = function() {
+            var thatObj = thisObj;
+            return original.apply(thatObj, extraArgs.concat(
+                Array.prototype.slice.call(
+                    arguments, extraArgs.length
+                )
+            ));
+        };
+        func.bind = function() {
+            var args = Array.prototype.slice.call(arguments);
+            return Function.prototype.bind.apply(funcObj, args);
+        }
+        return func;
+};}
+if (typeof Object.create !== "function") {
+  Object.create = (function () {
+    function F() {} // created only once
+    return function (o) {
+      F.prototype = o; // reused on each invocation
+      return new F();
+    };
+})();}
+try {
+    Object.defineProperty({}, "v", {value: null});
+} catch(e) {
+    Object.defineProperty = function (obj, atr, v) {
+        obj[atr] = v.value;
+    };
+}
+
+
+var augment = (function (bind, call) {
+    "use strict";
+
+    var bindable = Function.bindable = bind.bind(bind);
+    var callable = Function.callable = bindable(call);
+
+    var arrayFrom = Array.from = callable(Array.prototype.slice);
+    var ownPropertyOf = Object.ownPropertyOf = callable(Object.hasOwnProperty);
+
+    //Object.defineProperty(Function.prototype, "augment", augmentDescriptor);
+    Object.defineProperty(Object.prototype, "augment", { value: augment });
+
+    return callable(augment);
+
+    function augment(body) {
+        var base = typeof this === "function" ? this.prototype : this;
+        var prototype = Object.create(base);
+        body.apply(prototype, arrayFrom(arguments, 1).concat(base));
+        if (!ownPropertyOf(prototype, "constructor")) return prototype;
+        var constructor = prototype.constructor;
+        constructor.prototype = prototype;
+        return constructor;
+    }
+}(Function.bind, Function.call));
+
+
+Function.prototype.new = function () {
+     function functor() { return constructor.apply(this, args); }
+     var args = Array.prototype.slice.call(arguments);
+     functor.prototype = this.prototype;
+     var constructor = this;
+     return new functor;
+};
+
+function inherit() {
+    var len = arguments.length;
+    var parent = (len > 1) ? arguments[0] : Function.constructor;
+    var body = arguments[len - 1];
+    body.prototype = parent.prototype;
+
+    var constructor = body.new.apply(body, [parent.prototype]);
+    constructor.init.prototype = constructor;
+    return constructor.init;
+}
+
+
+var InheritPerson = inherit(function () {
+        this.init = function(name) {
+            this.nome = name;
+        };
+        this.setAddress = function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        };
+    });
+
+    var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+        
+            this.init = function (name) {
+              base.init(name);
+            };
+        
+            this.setAddress = function(city, street) {
+              base.setAddress("France", city, street);
+            };
+    });
+
+    var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
+        
+        this.init= function (name) {
+            base.init(name);
+        };
+        
+        this.setAddress = function(street) {
+            base.setAddress("Paris", street);
+            return this;
+        };
+    });
+
+
+
+
+
+
+    var AugmentPerson = Object.augment(function() {
+        this.constructor = function (name) {
+          this.name = name;
+        };
+    
+        this.setAddress = function(country, city, street) {
+          this.country = country;
+          this.city = city;
+          this.street = street;
+        };
+      });
+    
+      var AugmentFrenchGuy = AugmentPerson.augment(function(base) {
+    
+        this.constructor = function (name) {
+          base.constructor(name);
+        };
+    
+        this.setAddress = function(city, street) {
+          base.setAddress("France", city, street);
+        };
+      });
+    
+      var AugmentParisLover = AugmentFrenchGuy.augment(function(base) {
+    
+        this.constructor = function (name) {
+          base.constructor(name);
+        };
+    
+        this.setAddress = function(street) {
+          base.setAddress("Paris", street);
+          return this;
+        };
+      });
+
+
+
+
+
+
+
+
+
+
+var JRPerson = JRClass.extend({
+    init: function(name) {
+      this.name = name;
+    },
+    setAddress: function(country, city, street) {
+      this.country = country;
+      this.city = city;
+      this.street = street;
+    }
+  });
+
+  var JRFrenchGuy = JRPerson.extend({
+    init: function(name) {
+      this._super(name);
+    },
+    setAddress: function(city, street) {
+      this._super('France', city, street);
+    }
+  });
+
+  var JRParisLover = JRFrenchGuy.extend({
+    init: function(name) {
+      this._super(name);
+    },
+    setAddress: function(street) {
+      this._super('Paris', street);
+      return this;
+    }
+  });
+
+
+
+
+
+
+
+
+
+var RaptorPerson = define.Class({
+            init: function(name) {
+                this.name = name;
+            },
+            setAddress: function(country, city, street) {
+                this.country = country;
+                this.city = city;
+                this.street = street;
+            }
+        });
+        var RaptorFrenchGuy = define.Class({superclass: RaptorPerson}, ['super'], function($super) {
+            var superCtor = $super.constructor;
+            var superSetAddress = $super.setAddress;
+    
+            function RaptorFrenchGuy(name) {
+                superCtor.call(this, name);
+            };
+    
+            RaptorFrenchGuy.prototype = {
+                setAddress: function(city, street) {
+                    superSetAddress.call(this, 'France', city, street);
+                }
+            }
+    
+            return RaptorFrenchGuy;
+        });
+    
+        var RaptorParisLover = define.Class({superclass: RaptorFrenchGuy}, ['super'], function($super) {
+            var superCtor = $super.constructor;
+            var superSetAddress = $super.setAddress;
+    
+            function RaptorParisLover(name) {
+                superCtor.call(this, name);
+            };
+    
+            RaptorParisLover.prototype = {
+                setAddress: function(street) {
+                    superSetAddress.call(this, 'Paris', street);
+                    return this;
+                }
+            }
+    
+            return RaptorParisLover;
+        });
+
+
+
+
+
+var FCPerson = Function.inheritWith(function() {
+    return {
+        constructor: function(name) {
+                this.nome = name;
+        },
+        setAddress: function(country, city, street) {
+                this.country = country;
+                this.city = city;
+                this.street = street;
+        }
+    }
+});
+
+var FCFrenchGuy = FCPerson.inheritWith(function(base, baseCtor){
+    return {
+        constructor: function(name) {
+          baseCtor.call(this, name);
+        },
+        setAddress: function(city, street) {
+          base.setAddress('France', city, street);
+        }
+    }
+  });
+
+  var FCParisLover = FCFrenchGuy.inheritWith(function(base, baseCtor){
+    return {
+        constructor: function(name) {
+          baseCtor.call(this, name);
+        },
+        setAddress: function(street) {
+          base.setAddress('Paris', street);
+          return this;
+        }
+    }
+  });
+
+
+
+
+
+
+
+
+var t;
+t = new InheritParisLover("Mary");
+console.log(t.setAddress("CH"));
+
+t = new AugmentParisLover("Mary");
+console.log(t.setAddress("CH"));
+
+t = new JRParisLover("Mary");
+console.log(t.setAddress("CH"));
+
+t = new RaptorParisLover("Mary");
+console.log(t.setAddress("CH"));
+
+t = new FCParisLover("Mary");
+console.log(t.setAddress("CH"));
+</script>

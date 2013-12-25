@@ -1,0 +1,56 @@
+
+function inherit() {
+    var len = arguments.length;
+    var parent = (len > 1) ? arguments[0] : Object.constructor;
+    var body = arguments[len - 1];
+    body.prototype = parent.prototype;
+
+    var prototype = new body(parent.prototype);
+    var cons={};
+    for (i in prototype)
+        cons[i] = prototype[i]
+
+cons.init.prototype = cons;
+    return cons.init;
+}
+
+
+
+var InheritPerson = inherit(function () {
+        this.init = function(name) {
+            this.name = name;
+            console.log(1,this.name)
+        };
+        this.setAddress = function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        };
+    });
+
+    var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+        
+            this.init = function (name) {
+              base.init(name);
+              console.log(2)
+            };
+        
+            this.setAddress = function(city, street) {
+              base.setAddress("France", city, street);
+            };
+    });
+
+    var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
+        
+        this.init= function (name) {
+            base.init(name);
+            console.log(3)
+        };
+        
+        this.setAddress = function(street) {
+            base.setAddress("Paris", street);
+        };
+    });
+    
+a = new InheritParisLover("caca")
+a.name

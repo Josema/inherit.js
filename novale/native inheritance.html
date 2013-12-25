@@ -1,0 +1,198 @@
+<script>
+
+function A1 () {
+  this.pro1 = 'pro1 ';
+  this.method1 = function(){ return this.pro1; };
+  this.setpro = function(){ this.pro2='edited'; };
+}
+
+function B1() {
+  this.pro2 = 'pro2 ';
+  this.method2 = function(){return this.pro1 + this.pro2;};
+}
+B1.prototype = new A1();
+
+function C1() {
+  this.pro3 = 'pro3 ';
+  this.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+}
+C1.prototype = new B1();
+
+var inst = new C1()
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+
+
+
+
+
+
+
+
+function A2 () {
+  this.pro1 = 'pro1 ';
+  this.method1 = function(){ return this.pro1; };
+  this.setpro = function(){ this.pro2='edited'; };
+}
+
+function B2() {
+  this.pro2 = 'pro2 ';
+  this.method2 = function(){return this.pro1 + this.pro2;};
+  A2.apply(this, arguments);
+}
+
+function C2() {
+  this.pro3 = 'pro3 ';
+  this.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+  B2.apply(this, arguments);
+}
+
+var inst = new C2()
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+
+
+
+
+
+
+
+
+function A3(){}
+A3.prototype.pro1 = 'pro1 ';
+A3.prototype.method1 = function(){ return this.pro1; };
+A3.prototype.setpro = function(){ this.pro2='edited'; };
+
+function B3(){}
+B3.prototype.pro2 = 'pro2 ';
+B3.prototype.method2 = function(){return this.pro1 + this.pro2;};
+
+for (i in A3.prototype)
+    B3.prototype[i] = A3.prototype[i]
+
+function C3(){}
+C3.prototype.pro3 = 'pro3 ';
+C3.prototype.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+
+for (i in B3.prototype)
+    C3.prototype[i] = B3.prototype[i];
+
+var inst = new C3()
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+
+
+
+
+
+
+
+
+
+
+
+function A4() {
+  return {
+    pro1: 'pro1 ',
+    method1: function(){ return this.pro1 },
+    setpro: function(){ this.pro2='edited'; }
+  };
+}
+function B4() {
+  var obj = A4();
+  obj.pro2 = 'pro2 ';
+  obj.method2 = function(){return this.pro1 + this.pro2;};
+  return obj;
+}
+function C4() {
+  var obj = B4();
+  obj.pro3 = 'pro3 ';
+  obj.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+  return obj;
+}
+
+
+var inst = C4();
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+
+
+
+
+
+
+
+var A5 = {
+  pro1: 'pro1 ',
+  method1: function(){ return this.pro1 },
+  setpro: function(){ this.pro2='edited'; }
+};
+
+var B5 = Object.create(A5);
+B5.pro2 = 'pro2 ';
+B5.method2 = function(){return this.pro1 + this.pro2;};
+
+var C5 = Object.create(B5);
+C5.pro3 = 'pro3 ';
+C5.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+
+var inst = C5;
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+
+
+
+
+
+
+
+
+function A6() {
+  return {
+    pro1: 'pro1 ',
+    method1: function(){ return this.pro1 },
+    setpro: function(){ this.pro2='edited'; }
+  };
+}
+function B6() {
+  var obj = {};
+  obj.pro2 = 'pro2 ';
+  obj.method2 = function(){return this.pro1 + this.pro2;};
+  var a = A6();
+  for (i in a)
+    obj[i] = a[i];
+  return obj;
+}
+function C6() {
+  var obj = {};
+  obj.pro3 = 'pro3 ';
+  obj.method3 = function(){return this.pro1 + this.pro2 + this.pro3 + this.method1() + this.method2();};
+  var b = B6();
+  for (i in b)
+    obj[i] = b[i];
+  return obj;
+}
+
+
+var inst = C6();
+inst.setpro();
+inst.pro3 = 'changedout ';
+inst.newm = function(){ this.pro1 = "# "; };
+inst.newm();
+console.log(inst.method3())
+</script>
