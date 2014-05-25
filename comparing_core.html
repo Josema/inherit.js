@@ -9,18 +9,17 @@ var inherit = (function() {
 		return (typeof obj === "object") ? 
 			obj
 		:
-			((obj.hasOwnProperty('constructor')) ?
+			((obj.prototype.hasOwnProperty('constructor')) ?
 				obj.prototype 
 			: 
-				new obj);
+				new obj());
 	};
 
 	return function() {
 
-		var len = arguments.length;
-		var parent = (len > 1) ? arguments[0] : function(){};
-		var bodyelement = arguments[len - 1];
-		var parentprototype = getprototype(parent);
+		var len = arguments.length,
+			parent = (len > 1) ? arguments[0] : function(){},
+			bodyelement = arguments[len - 1];
 		
 		if (typeof bodyelement === 'object') {
 			var body = function(){};
@@ -28,7 +27,7 @@ var inherit = (function() {
 		}
 		else {
 			var body = bodyelement;
-			body.prototype = Object.create(parentprototype);
+			body.prototype = Object.create(getprototype(parent));
 		}
 
 		var prototype = new body(body.prototype);
@@ -73,7 +72,7 @@ var personfunction = function() {
 
 var InheritPerson = inherit(personfunction);
 
-var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+var InheritFrenchGuy = inherit(personfunction, function(base) {
 	this.local = "local2";
 	this.getlocal = function(){
 		return this.local + ' ' + base.local + ',' + base.getlocal() + '---';

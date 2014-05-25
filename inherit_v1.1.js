@@ -5,8 +5,8 @@
    * constructor
    * constructor opcional
    * instanceof
-   * inherit objects
-   * inherit native functions (not using inherit on the super class)
+   * inherit objects (inherit objects break the instance of feature)
+   * inherit native functions (not using inherit on the super class, inherit objects break the instance of feature)
  */
 
 var inherit = (function() {
@@ -16,18 +16,17 @@ var inherit = (function() {
 		return (typeof obj === "object") ? 
 			obj
 		:
-			((obj.hasOwnProperty('constructor')) ?
+			((obj.prototype.hasOwnProperty('constructor')) ?
 				obj.prototype 
 			: 
-				new obj);
+				new obj());
 	};
 
 	return function() {
 
-		var len = arguments.length;
-		var parent = (len > 1) ? arguments[0] : function(){};
-		var bodyelement = arguments[len - 1];
-		var parentprototype = getprototype(parent);
+		var len = arguments.length,
+			parent = (len > 1) ? arguments[0] : function(){},
+			bodyelement = arguments[len - 1];
 		
 		if (typeof bodyelement === 'object') {
 			var body = function(){};
@@ -35,7 +34,7 @@ var inherit = (function() {
 		}
 		else {
 			var body = bodyelement;
-			body.prototype = Object.create(parentprototype);
+			body.prototype = Object.create(getprototype(parent));
 		}
 
 		var prototype = new body(body.prototype);
