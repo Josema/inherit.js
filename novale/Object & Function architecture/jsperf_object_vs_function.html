@@ -1,0 +1,165 @@
+<script>
+Object.class = function(object) {
+	object.extend = Object.extend;
+	return object;
+};
+
+Object.extend = function () {
+	var hasOwnProperty = Object.hasOwnProperty;
+	var object = Object.create(this);
+	var length = arguments.length;
+	var index = length;
+
+	while (index) {
+		var extension = arguments[length - (index--)];
+
+		for (var property in extension)
+			if (property !== "clones" &&
+				hasOwnProperty.call(extension, property) ||
+				typeof object[property] === "undefined")
+					object[property] = extension[property];
+
+
+		if (hasOwnProperty.call(extension, "clones"))
+			extension.clones.unshift(object);
+		else extension.clones = [object];
+	}
+	
+	return object;
+};
+
+
+Function.prototype.extend2 = function () {
+	var hasOwnProperty = Object.hasOwnProperty;
+	var object = Object.create(this.prototype);
+	var length = arguments.length;
+	var index = length;
+
+	while (index) {
+		var extension = arguments[length - (index--)];
+
+		for (var property in extension)
+			if (property !== "clones" &&
+				hasOwnProperty.call(extension, property) ||
+				typeof object[property] === "undefined")
+					object[property] = extension[property];
+
+
+		if (hasOwnProperty.call(extension, "clones"))
+			extension.clones.unshift(object);
+		else extension.clones = [object];
+	}
+	
+	var body = (hasOwnProperty.call(object, "constructor")) ? object.constructor : function(){};
+	body.prototype = object;
+	return body;
+};	
+
+
+    var N = {};
+
+	var A = Object.class({
+		a: true,
+		passengers: 0,
+
+	});
+
+	var B = Object.class({
+		b: true,
+		passengers: 1
+	});
+
+	var C = A.extend({
+		c: true,
+		passengers: 2,
+		width: 5,
+		new: function(a, b){
+			var self = Object.create(this);
+        	self.height = a;
+        	self.width = b;
+        	return self;
+		}
+
+	});
+
+	var D = B.extend({
+		d: true,
+		passengers: 3
+	});
+
+	var E = C.extend(D, N,  {
+		e: true,
+		passengers: 4,
+		new: function(a){
+			return C.new.call(this,a,a)
+		}
+	});
+
+	var F = E.extend({
+		f: true,
+		added: true,
+		passengers: 5,
+		new: function(){
+			return E.new.call(this, 30);
+		}
+	});
+
+
+//==============================
+
+
+	var N2 = function() {};
+
+	var A2 = Function.extend2({
+		a: true,
+		passengers: 0
+	});
+
+	var B2 = Function.extend2({
+		b: true,
+		passengers: 1
+	});
+
+	var C2 = A2.extend2({
+		c: true,
+		passengers: 2,
+		width: 5,
+		constructor: function(a, b) {
+        	this.height = a;
+        	this.width = b;
+		}
+	});
+
+	var D2 = B2.extend2({
+		d: true,
+		passengers: 3
+	});
+
+	var E2 = C2.extend2(D2, N2,  {
+		e: true,
+		passengers: 4,
+		constructor: function(a){
+			C2.prototype.constructor.call(this, a, a);
+		}
+	});
+
+	var F2 = E2.extend2({
+		f: true,
+		added: true,
+		passengers: 5,
+		constructor: function(){
+			E2.prototype.constructor.call(this, 30);
+		}
+	});
+
+
+insc = C.new(10,10)
+inse = E.new(20)
+insf = F.new()
+
+
+insc = new C2(10,10)
+inse = new E2(20)
+insf = new F2()
+
+</script>

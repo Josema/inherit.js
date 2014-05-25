@@ -1,0 +1,86 @@
+<script src="object.js"></script>
+<script src="event.js"></script>
+<script>
+
+	// Adding events to custom object
+	var N = {};
+
+	var A = Object.class({
+		a: true,
+		passengers: 0,
+
+	});
+
+	var B = Object.class({
+		b: true,
+		passengers: 1
+	});
+
+	var C = A.extend({
+		c: true,
+		passengers: 2,
+		width: 5,
+		new: function(a, b){
+			var self = Object.create(this);
+        	self.height = a;
+        	self.width = b;
+        	return self;
+		}
+
+	});
+
+	var D = B.extend({
+		d: true,
+		passengers: 3
+	});
+
+	var E = C.extend(D, N,  {
+		e: true,
+		passengers: 4,
+		new: function(a){
+			return C.new.call(this,a,a)
+		}
+	});
+
+	var F = E.extend({
+		f: true,
+		added: true,
+		passengers: 5,
+		new: function(){
+			return E.new.call(this, 30);
+		}
+	});
+
+
+
+	insc = C.new(10,10)
+	inse = E.new(20)
+	insf = F.new()
+
+	console.log(insc.width, inse.width, insf.width)
+	insc.width = 999;
+	console.log(insc.width, inse.width, insf.width)
+
+
+	console.log("C", insc.instanceof(C), insc.instanceof(A), " - ", insc.instanceof(B), insc.instanceof(N))
+	console.log("E", inse.instanceof(E), inse.instanceof(A), inse.instanceof(B), inse.instanceof(C), inse.instanceof(D), inse.instanceof(N), " - ", inse.instanceof(F))
+	console.log("F", insf.instanceof(F), insf.instanceof(A), insf.instanceof(B), insf.instanceof(C), insf.instanceof(D), insf.instanceof(E), " - ", insf.instanceof(N))
+
+
+</script>
+
+
+
+<pre>
+
+C.A
+
+D.B
+
+
+
+T.C
+T2.T
+T3.D
+T4.T3
+</pre>

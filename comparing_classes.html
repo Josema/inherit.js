@@ -1,0 +1,541 @@
+<script src="http://raptorjs.org/dist/raptor.min.js" type="text/javascript"></script>
+<script>
+testring = [
+'nome1_nome2_nome2B_nome3_',
+'nome1_Nam2changed_nome2B_nome3_',
+'local1--- local2 local1,local1------ local2 local1,local1------ local3 local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed LOCAL2FROMCHILD_,LOCAL2FROMCHILD_ local1,local1---------',
+'local2 local1,local1------',
+'France Paris Street3,',
+'France Paris Street3,France City2 Street2',
+'France Paris Street3,France City2 Street2,Country1 City1 Street1'
+]
+function inherit() {
+    var len = arguments.length;
+    var parent = (len > 1) ? arguments[0] : function(){};
+    var body = arguments[len - 1];
+
+    body.prototype = Object.create(parent.prototype);
+    var constructor = new body(body.prototype);
+    if (constructor.constructor === undefined) constructor.constructor = function(){};
+    constructor.constructor.prototype = constructor;
+    return constructor.constructor;
+}
+var augment = (function (bind, call) {
+    "use strict";
+
+    var bindable = Function.bindable = bind.bind(bind);
+    var callable = Function.callable = bindable(call);
+
+    var arrayFrom = Array.from = callable(Array.prototype.slice);
+    var ownPropertyOf = Object.ownPropertyOf = callable(Object.hasOwnProperty);
+
+    //Object.defineProperty(Function.prototype, "augment", augmentDescriptor);
+    Object.defineProperty(Object.prototype, "augment", { value: augment });
+
+    return callable(augment);
+
+    function augment(body) {
+        var base = typeof this === "function" ? this.prototype : this;
+        var prototype = Object.create(base);
+        body.apply(prototype, arrayFrom(arguments, 1).concat(base));
+        if (!ownPropertyOf(prototype, "constructor")) return prototype;
+        var constructor = prototype.constructor;
+        constructor.prototype = prototype;
+        return constructor;
+    }
+}(Function.bind, Function.call));
+
+
+
+
+
+Object.prototype.extend = function () {
+    var hasOwnProperty = Object.hasOwnProperty;
+    var object = Object.create(this);
+    var length = arguments.length;
+    var index = length;
+
+    while (index) {
+        var extension = arguments[length - (index--)];
+
+        for (var property in extension)
+            if (property !== "clones" &&
+                hasOwnProperty.call(extension, property) ||
+                typeof object[property] === "undefined")
+                    object[property] = extension[property];
+
+
+        if (hasOwnProperty.call(extension, "clones"))
+            extension.clones.unshift(object);
+        else extension.clones = [object];
+    }
+    
+    return object;
+};
+
+Object.prototype.instanceof = function (prototype) { //Object.instanceof.call(A, B)
+
+
+    if (Object.hasOwnProperty.call(prototype, "clones"))
+        var clones = prototype.clones;
+    var object = this;
+
+    do {
+        if (object === prototype ||
+            clones && clones.indexOf(object) >= 0)
+                return true;
+
+        var object = Object.getPrototypeOf(object);
+    } while (object);
+
+    return false;
+};
+
+
+
+
+(function(){function u(){}function f(){}var i=typeof global!="undefined",r,o,y;String.prototype.format||(r={},String.prototype.format=function(){for(var t=this,i=arguments,n=i.length;--n>=0;)t=t.replace(r[n]||(r[n]=RegExp("\\{"+n+"\\}","gm")),i[n]);return t},String.format||(String.format=function(n){for(var i=arguments,t=i.length;--t;)n=n.replace(r[t-1]||(r[t-1]=RegExp("\\{"+(t-1)+"\\}","gm")),i[t]);return n}));var t=Function.prototype,l=Array.prototype,e=l.forEach,a=Object.defineProperty,v=typeof Object.defineProperties=="function",n={};if(n=n.__proto__===Object.prototype,n)try{n={},n.__proto__={Object:1},n=n.Object===1}catch(b){n=!1}if(typeof Object.getPrototypeOf!="function"&&(Object.getPrototypeOf=n?function(n){return n.__proto__}:function(n){return n==null||!n.constructor||n===Object.prototype?null:n.constructor.prototype===n?Object.prototype:n.constructor.prototype}),e||(l.forEach=e=function(n,t){for(var i=0,r=this.length;i<r;++i)n.call(t||this,this[i],i,this)}),t.fastClass=function(n){var f=this,e=this.prototype,u,r;return n=n||function(){this.constructor=function(){f.apply(this,arguments)}},n.prototype=e,u=new n(e,this),u.hasOwnProperty("constructor")||(u.constructor=function(){f.apply(this,arguments)}),r=u.constructor,r.prototype=u,n=null,arguments.length>1&&t.define.apply(r,arguments),r.constructor=r,r},t.inheritWith=n?function(n){var u=this,r=(typeof n=="function"?n.call(this,this.prototype,this):n)||{},i=r.hasOwnProperty("constructor")?r.constructor:function(){u.apply(this,arguments)};return i.prototype=r,r.__proto__=this.prototype,n=null,arguments.length>1&&t.define.apply(i,arguments),i.constructor=i,i}:function(n){var e=this,r=(typeof n=="function"?n.call(this,this.prototype,this):n)||{},f=r.hasOwnProperty("constructor")?r.constructor:function(){e.apply(this,arguments)},o;return u.prototype=this.prototype,f.prototype=o=new u,n=r,t.define.apply(f,arguments),f.constructor=f,f},t.define=function(n,t){var f=this,r=this.prototype,s=n,o;if(n){typeof n=="function"&&(n=n.call(r,this.prototype,this));for(o in n)r[o]=n[o]}return n=null,(arguments.length>2||t)&&(r.hasOwnProperty("__mixins__")||(v?a(r,"__mixins__",{enumerable:!1,value:[],writeable:!1}).__mixins__.__hidden=!0:r.__mixins__=[]))&&e.call(arguments,function(n,t,e,o){if(o=typeof n=="function",o?(u.prototype=n.prototype,e=new n(r,f)):e=n,e){o&&r.__mixins__.push(n);for(var s in e)s!="constructor"&&s!="prototype"&&(r[s]=e[s])}}),this},Function.define=function(n,r){var f,u=n||function(){},e=arguments.length>1;return typeof n!="function"?(u=n.hasOwnProperty("constructor")?n.constructor:function(){},u.prototype=n,e=!0):(n=r,r=null),e&&t.define.apply(u,arguments),f=function(){Function.initMixins(this),u.apply(this,arguments)},f.prototype=u.prototype,f.constructor=f.prototype.constructor=u.constructor=u.prototype.constructor=f,f},t.defineStatic=function(n){if(n)for(var t in n)this[t]=n[t];return this},f.defineStatic({abstract:!0}),Function.abstract=function(n,t){var r=n||t?function(){typeof n=="function"&&n.apply(this,arguments),typeof t=="function"&&t.apply(this,arguments),typeof n=="string"||f()}.defineStatic({abstract:!0}):f;return r},Function.initMixins=function(t){if(t&&!t.__initMixins__){var r=t,e,o,u,f,s={};for(t.__initMixins__=1;r;)if(r=n?r.__proto__:Object.getPrototypeOf(r),r&&r.hasOwnProperty("__mixins__")&&(e=r.__mixins__)&&(o=e.length))for(u=0;f=e[u],u<o;u++)f in s||(s[f]=1,f.call(t,r,r.constructor));delete t.__initMixins__}},v){o={0:[Function,"initMixins","define","abstract"],1:[t,"fastClass","inheritWith","define","defineStatic"]};for(y in o)for(var s=o[y],p=s[0],h=1,c;c=s[h],h<s.length;h++)a(p,c,{enumerable:!1,value:p[c]})}})();
+</script>
+<script>
+
+var InheritPerson = inherit(function () {
+    this.local = "local1";
+    this.getlocal = function(){
+        return this.local + '---';
+    };
+    this.constructor = function(nome) {
+        this.nome = nome;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.constructor = function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(city, street) {
+        base.setAddress.call(this, "France", city, street);
+    };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.change = function(){
+        base.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+    };
+});
+
+
+
+
+var AugmentPerson = Object.augment(function() {
+    this.local = "local1";
+    this.getlocal = function(){
+        return this.local + '---';
+    };
+    this.constructor = function(nome) {
+        this.nome = nome;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+var AugmentFrenchGuy = AugmentPerson.augment(function(base) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.constructor = function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(city, street) {
+        base.setAddress.call(this, "France", city, street);
+    };
+});
+    
+var AugmentParisLover = AugmentFrenchGuy.augment(function(base) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.change = function(){
+        base.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+    };
+});  
+    
+    
+var FCPerson = Function.inheritWith(function() {
+    return {
+        local:"local1",
+        getlocal: function(){
+            return this.local + '---';
+        },
+        constructor: function(nome) {
+            this.nome = nome;
+        },
+        setAddress: function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        }
+    }
+});
+var FCFrenchGuy = FCPerson.inheritWith(function(base, baseCtor){
+    return {
+        local:"local2",
+        getlocal: function(){
+            return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+        },
+        constructor: function(nome) {
+            baseCtor.call(this, nome);
+        },
+        setAddress: function(city, street) {
+            base.setAddress.call(this, 'France', city, street);
+        }
+    }
+});
+
+var FCParisLover = FCFrenchGuy.inheritWith(function(base, baseCtor){
+    return {
+        local:"local3",
+        getlocal: function(){
+            return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+        },
+        change: function(){
+            base.local = "LOCAL2FROMCHILD_"
+        },
+        constructor: function(nome) {
+            baseCtor.call(this, nome);
+        },
+        setAddress: function(street) {
+            base.setAddress.call(this, 'Paris', street);
+        }
+    }
+});
+    
+        
+        
+        
+var RaptorPerson = define.Class({
+    local:"local1",
+    getlocal: function(){
+        return this.local + '---';
+    },
+    init: function(nome) {
+        this.nome = nome;
+    },
+    setAddress: function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    }
+});
+var RaptorFrenchGuy = define.Class({superclass: RaptorPerson}, ['super'], function($super) {
+
+    function RaptorFrenchGuy(nome) {
+        $super.constructor.call(this, nome);
+    };
+
+    RaptorFrenchGuy.prototype = {
+        local:"local2",
+        getlocal: function(){
+            return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+        },
+        setAddress: function(city, street) {
+            $super.setAddress.call(this, 'France', city, street);
+        }
+    }
+
+    return RaptorFrenchGuy;
+});
+
+var RaptorParisLover = define.Class({superclass: RaptorFrenchGuy}, ['super'], function($super) {
+
+
+    function RaptorParisLover(nome) {
+        $super.constructor.call(this, nome);
+    };
+
+    RaptorParisLover.prototype = {
+        local:"local3",
+        getlocal: function(){
+            return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+        },
+        change: function(){
+            $super.local = "LOCAL2FROMCHILD_"
+        },
+        setAddress: function(street) {
+            $super.setAddress.call(this, 'Paris', street);
+        }
+    }
+
+    return RaptorParisLover;
+});
+
+
+
+
+
+var OExtendPerson = {
+    local:"local1",
+    getlocal: function(){
+        return this.local + '---';
+    },
+    constructor: function(nome) {
+        this.nome = nome;
+        return Object.create(this);
+    },
+    setAddress: function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    }
+};
+var OExtendFrenchGuy = OExtendPerson.extend({
+    local:"local2",
+    getlocal: function(){
+        return this.local + ' ' + OExtendPerson.local + ',' + OExtendPerson.getlocal() + '---';
+    },
+    constructor: function (name) {
+      OExtendPerson.constructor.call(this, name);
+      return Object.create(this);
+    },
+    setAddress: function(city, street) {
+      OExtendPerson.setAddress.call(this, "France", city, street);
+    }
+});
+
+var OExtendParisLover = OExtendFrenchGuy.extend({
+    local:"local3",
+    getlocal: function(){
+        return this.local + ' ' + OExtendFrenchGuy.local + ',' + OExtendFrenchGuy.getlocal() + '---';
+    },
+    change: function(){
+        OExtendFrenchGuy.local = "LOCAL2FROMCHILD_"
+    },
+    constructor: function (name) {
+        var self = Object.create(this);
+        OExtendFrenchGuy.constructor.call(self, name);
+        return self;
+    },
+    setAddress: function(street) {
+        OExtendFrenchGuy.setAddress.call(this, "Paris", street);
+        return this;
+    }
+});
+
+</script>
+
+
+<script>
+console.log("inherit")
+console.log("==============")
+var A1 = new InheritPerson("nome1_");
+var A2 = new InheritFrenchGuy("nome2_");
+var A2b = new InheritFrenchGuy("nome2B_");
+var A3 = new InheritParisLover("nome3_");
+
+console.log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console.log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console.log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console.log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console.log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new InheritFrenchGuy("nome2B_");
+console.log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console.log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console.log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console.log(5.1, (A1 instanceof InheritPerson)+' '+ (A1 instanceof InheritFrenchGuy) +' '+ (A1 instanceof InheritParisLover))
+console.log(5.2, (A2 instanceof InheritPerson)+' '+ (A2 instanceof InheritFrenchGuy) +' '+ (A2 instanceof InheritParisLover))
+console.log(5.3, (A3 instanceof InheritPerson)+' '+ (A3 instanceof InheritFrenchGuy) +' '+ (A3 instanceof InheritParisLover))
+
+
+
+
+
+console.log("augment")
+console.log("==============")
+
+var B1 = new AugmentPerson("nome1_");
+var B2 = new AugmentFrenchGuy("nome2_");
+var B2b = new AugmentFrenchGuy("nome2B_");
+var C3 = new AugmentParisLover("nome3_");
+
+console.log(1.1, B1.nome + B2.nome + B2b.nome + C3.nome == testring[0])
+B2.nome = "Nam2changed_";
+console.log(1.2, B1.nome + B2.nome + B2b.nome + C3.nome == testring[1])
+
+console.log(2.1, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ C3.getlocal() == testring[2])
+B1.local = "local1_changed";
+B2.local = "local2_changed";
+B2b.local = "local2b_changed";
+C3.local = "local3_changed";
+console.log(2.2, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ C3.getlocal() == testring[3])
+
+C3.change();
+console.log(3.1, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ C3.getlocal() == testring[4])
+var B2c = new AugmentFrenchGuy("nome2B_");
+console.log(3.2, B2c.getlocal() == testring[5])
+
+C3.setAddress("Street3");
+console.log(4.1, C3.country + ' ' + C3.city + ' ' + C3.street + ',' == testring[6])
+B2.setAddress("City2", "Street2");
+console.log(4.2, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + B2.country + ' ' + B2.city + ' ' + B2.street == testring[7])
+B1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + B2.country + ' ' + B2.city + ' ' + B2.street + ',' + B1.country + ' ' + B1.city + ' ' + B1.street == testring[8])
+
+console.log(5.1, (B1 instanceof AugmentPerson)+' '+ (B1 instanceof AugmentFrenchGuy) +' '+ (B1 instanceof AugmentParisLover))
+console.log(5.2, (B2 instanceof AugmentPerson)+' '+ (B2 instanceof AugmentFrenchGuy) +' '+ (B2 instanceof AugmentParisLover))
+console.log(5.3, (C3 instanceof AugmentPerson)+' '+ (C3 instanceof AugmentFrenchGuy) +' '+ (C3 instanceof AugmentParisLover))
+
+
+
+console.log("FastClass")
+console.log("==============")
+
+var C1 = new FCPerson("nome1_");
+var C2 = new FCFrenchGuy("nome2_");
+var C2b = new FCFrenchGuy("nome2B_");
+var C3 = new FCParisLover("nome3_");
+
+console.log(1.1, C1.nome + C2.nome + C2b.nome + C3.nome == testring[0])
+C2.nome = "Nam2changed_";
+console.log(1.2, C1.nome + C2.nome + C2b.nome + C3.nome == testring[1])
+
+console.log(2.1, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[2])
+C1.local = "local1_changed";
+C2.local = "local2_changed";
+C2b.local = "local2b_changed";
+C3.local = "local3_changed";
+console.log(2.2, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[3])
+
+C3.change();
+console.log(3.1, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[4])
+var C2c = new FCFrenchGuy("nome2B_");
+console.log(3.2, C2c.getlocal() == testring[5])
+
+C3.setAddress("Street3");
+console.log(4.1, C3.country + ' ' + C3.city + ' ' + C3.street + ',' == testring[6])
+C2.setAddress("City2", "Street2");
+console.log(4.2, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + C2.country + ' ' + C2.city + ' ' + C2.street == testring[7])
+C1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + C2.country + ' ' + C2.city + ' ' + C2.street + ',' + C1.country + ' ' + C1.city + ' ' + C1.street == testring[8])
+
+console.log(5.1, (C1 instanceof FCPerson)+' '+ (C1 instanceof FCFrenchGuy) +' '+ (C1 instanceof FCParisLover))
+console.log(5.2, (C2 instanceof FCPerson)+' '+ (C2 instanceof FCFrenchGuy) +' '+ (C2 instanceof FCParisLover))
+console.log(5.3, (C3 instanceof FCPerson)+' '+ (C3 instanceof FCFrenchGuy) +' '+ (C3 instanceof FCParisLover))
+
+
+
+console.log("Raptor")
+console.log("==============")
+
+var D1 = new RaptorPerson("nome1_");
+var D2 = new RaptorFrenchGuy("nome2_");
+var D2b = new RaptorFrenchGuy("nome2B_");
+var D3 = new RaptorParisLover("nome3_");
+
+console.log(1.1, D1.nome + D2.nome + D2b.nome + D3.nome == testring[0])
+D2.nome = "Nam2changed_";
+console.log(1.2, D1.nome + D2.nome + D2b.nome + D3.nome == testring[1])
+
+console.log(2.1, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[2])
+D1.local = "local1_changed";
+D2.local = "local2_changed";
+D2b.local = "local2b_changed";
+D3.local = "local3_changed";
+console.log(2.2, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[3])
+
+D3.change();
+console.log(3.1, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[4])
+var D2c = new RaptorFrenchGuy("nome2B_");
+console.log(3.2, D2c.getlocal() == testring[5])
+
+D3.setAddress("Street3");
+console.log(4.1, D3.country + ' ' + D3.city + ' ' + D3.street + ',' == testring[6])
+D2.setAddress("City2", "Street2");
+console.log(4.2, D3.country + ' ' + D3.city + ' ' + D3.street + ',' + D2.country + ' ' + D2.city + ' ' + D2.street == testring[7])
+D1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, D3.country + ' ' + D3.city + ' ' + D3.street + ',' + D2.country + ' ' + D2.city + ' ' + D2.street + ',' + D1.country + ' ' + D1.city + ' ' + D1.street == testring[8])
+
+console.log(5.1, (D1 instanceof RaptorPerson)+' '+ (D1 instanceof RaptorFrenchGuy) +' '+ (D1 instanceof RaptorParisLover))
+console.log(5.2, (D2 instanceof RaptorPerson)+' '+ (D2 instanceof RaptorFrenchGuy) +' '+ (D2 instanceof RaptorParisLover))
+console.log(5.3, (D3 instanceof RaptorPerson)+' '+ (D3 instanceof RaptorFrenchGuy) +' '+ (D3 instanceof RaptorParisLover))
+
+
+
+
+console.log("Object.extend")
+console.log("==============")
+var E1 = OExtendPerson.constructor("nome1_");
+var E2 = OExtendFrenchGuy.constructor("nome2_");
+var E2b = OExtendFrenchGuy.constructor("nome2B_");
+var E3 = OExtendParisLover.constructor("nome3_");
+
+console.log(1.1, E1.nome + E2.nome + E2b.nome + E3.nome == testring[0])
+E2.nome = "Nam2changed_";
+console.log(1.2, E1.nome + E2.nome + E2b.nome + E3.nome == testring[1])
+
+console.log(2.1, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[2])
+E1.local = "local1_changed";
+E2.local = "local2_changed";
+E2b.local = "local2b_changed";
+E3.local = "local3_changed";
+console.log(2.2, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[3])
+
+E3.change();
+console.log(3.1, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[4])
+var E2c = new RaptorFrenchGuy("nome2B_");
+console.log(3.2, E2c.getlocal() == testring[5])
+
+E3.setAddress("Street3");
+console.log(4.1, E3.country + ' ' + E3.city + ' ' + E3.street + ',' == testring[6])
+E2.setAddress("City2", "Street2");
+console.log(4.2, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country + ' ' + E2.city + ' ' + E2.street == testring[7])
+E1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country + ' ' + E2.city + ' ' + E2.street + ',' + E1.country + ' ' + E1.city + ' ' + E1.street == testring[8])
+
+console.log(5.1, (E1 instanceof RaptorPerson)+' '+ (E1 instanceof RaptorFrenchGuy) +' '+ (E1 instanceof RaptorParisLover))
+console.log(5.2, (E2 instanceof RaptorPerson)+' '+ (E2 instanceof RaptorFrenchGuy) +' '+ (E2 instanceof RaptorParisLover))
+console.log(5.3, (E3 instanceof RaptorPerson)+' '+ (E3 instanceof RaptorFrenchGuy) +' '+ (E3 instanceof RaptorParisLover))
+
+</script>

@@ -1,0 +1,71 @@
+
+<script>
+function inherit() {
+	var len = arguments.length;
+	if (len > 1){
+		var parent = arguments[0];
+	}
+	else {
+		console.log(arguments[0], 1235);
+		var tmp = new arguments[0];
+		var parent = function(){};
+		for (i in tmp)
+	    	parent.prototype[i] = tmp[i];
+		console.log(2, parent.prototype)
+	}
+	var body = arguments[len - 1];
+
+	body.prototype = parent.prototype;
+	var constructor = new body(parent.prototype);
+	if (constructor.init === undefined) constructor.init = function(){};
+	constructor.init.prototype = constructor;
+	return constructor.init;
+}
+
+var InheritPerson = inherit(function () {
+    this.init = function(name) {
+        this.name = name;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+
+var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+        this.init = function (name) {
+          base.init.call(this, name);
+        };
+   
+        this.setAddress = function(city, street) {
+          base.setAddress.call(this, "France", city, street);
+        };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
+    this.init= function (name) {
+        base.init.call(this, name);
+    };
+   
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+        return this;
+    };
+});
+var a = new InheritPerson("a");
+a.setAddress ("me", "la", "suda");
+var b = new InheritFrenchGuy("b");
+b.setAddress ("Burdeos", "street");
+var b2 = new InheritFrenchGuy("b2");
+b2.setAddress ("Burdeos2", "street2");
+var c = new InheritParisLover("c");
+c.setAddress ("MC");
+
+
+console.log(a.name + b.name + c.name == "abc")
+console.log(a.name + b.name + b2.name + c.name)
+console.log(a.street + b.street + b2.street + c.street)
+
+
+</script>

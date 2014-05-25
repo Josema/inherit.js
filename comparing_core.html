@@ -1,0 +1,139 @@
+http://jsperf.com/comparing-inherit-js
+
+<script>
+function inherit() {
+	var len = arguments.length;
+	var parent = (len > 1) ? arguments[0] : function(){};
+	var body = arguments[len - 1];
+
+	body.prototype = Object.create(parent.prototype);
+	var constructor = new body(body.prototype);
+	if (constructor.constructor === undefined) constructor.constructor = function(){};
+	constructor.constructor.prototype = constructor;
+	return constructor.constructor;
+}
+
+
+
+
+
+
+
+var InheritPerson = inherit(function () {
+    this.local = "local1";
+    this.getlocal = function(){
+        return this.local + '---';
+    };
+    this.getnotbydefault = function(){
+        return this.notbydefault + '---';
+    };
+    this.constructor = function(name) {
+        this.name = name;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+
+var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.getnotbydefault = function(){
+        return this.notbydefault + ' ' + base.notbydefault + ',' + base.getnotbydefault() + '---';
+    };
+    this.constructor = function (name) {
+        base.constructor.call(this, name);
+    };
+    this.setAddress = function(city, street) {
+        base.setAddress.call(this, "France", city, street);
+    };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.change = function(){
+        base.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (name) {
+        base.constructor.call(this, name);
+    };
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+    };
+});
+</script>
+
+
+
+<script>
+testring = [
+'Name1_Name2_Name2B_Name3_',
+'Name1_Nam2changed_Name2B_Name3_',
+'local1--- local2 local1,local1------ local2 local1,local1------ local3 local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed LOCAL2FROMCHILD_,LOCAL2FROMCHILD_ local1,local1---------',
+'local2 local1,local1------',
+'France Paris Street3,',
+'France Paris Street3,France City2 Street2',
+'France Paris Street3,France City2 Street2,Country1 City1 Street1'
+]
+
+
+
+var t1 = new InheritPerson2("Name1_");
+var t2 = new InheritFrenchGuy2("Name2_");
+var t2b = new InheritFrenchGuy2("Name2B_");
+var t3 = new InheritParisLover2("Name3_");
+
+console.log('///// Testing .name')
+console.log(t1.name + t2.name + t2b.name + t3.name == testring[0])
+t2.name = "Nam2changed_";
+console.log(t1.name + t2.name + t2b.name + t3.name == testring[1])
+
+console.log('.')
+console.log('///// Testing .local')
+console.log(t1.getlocal() +' '+ t2.getlocal() +' '+ t2b.getlocal() +' '+ t3.getlocal() == testring[2])
+t1.local = "local1_changed";
+t2.local = "local2_changed";
+t2b.local = "local2b_changed";
+t3.local = "local3_changed";
+console.log(t1.getlocal() +' '+ t2.getlocal() +' '+ t2b.getlocal() +' '+ t3.getlocal() == testring[3])
+
+console.log('.')
+console.log('///// Changing property from the child')
+t3.change();
+console.log(t1.getlocal() +' '+ t2.getlocal() +' '+ t2b.getlocal() +' '+ t3.getlocal() == testring[4])
+var t2c = new InheritFrenchGuy2("Name2B_");
+console.log(t2c.getlocal() == testring[5])
+
+console.log('.')
+console.log('///// Changing from the supper')
+
+
+t3.setAddress("Street3");
+console.log(t3.country + ' ' + t3.city + ' ' + t3.street + ',' == testring[6])
+t2.setAddress("City2", "Street2");
+console.log(t3.country + ' ' + t3.city + ' ' + t3.street + ',' + t2.country + ' ' + t2.city + ' ' + t2.street == testring[7])
+t1.setAddress("Country1", "City1", "Street1");
+console.log(t3.country + ' ' + t3.city + ' ' + t3.street + ',' + t2.country + ' ' + t2.city + ' ' + t2.street + ',' + t1.country + ' ' + t1.city + ' ' + t1.street == testring[8])
+
+
+console.log('.')
+console.log('///// Testing instanceof')
+console.log((t1 instanceof InheritPerson2)+' '+ (t1 instanceof InheritFrenchGuy2) +' '+ (t1 instanceof InheritParisLover2))
+console.log((t2 instanceof InheritPerson2)+' '+ (t2 instanceof InheritFrenchGuy2) +' '+ (t2 instanceof InheritParisLover2))
+console.log((t3 instanceof InheritPerson2)+' '+ (t3 instanceof InheritFrenchGuy2) +' '+ (t3 instanceof InheritParisLover2))
+
+
+
+
+
+
+</script>

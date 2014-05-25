@@ -1,0 +1,116 @@
+<script src="function.js"></script>
+<script>
+
+	// Adding events to custom object
+	var N = function() {};
+
+	var A = Function.extend({
+		a: true,
+		passengers: 0
+	});
+
+	var B = function() {};
+	B.prototype = {
+		b: true,
+		passengers: 1
+	};
+
+	var C = A.extend({
+		c: true,
+		passengers: 2,
+		width: 5,
+		constructor: function(a, b) {
+        	this.height = a;
+        	this.width = b;
+		}
+	});
+
+	var D = B.extend({
+		d: true,
+		passengers: 3
+	});
+
+	var E = C.extend(D, N,  {
+		e: true,
+		passengers: 4,
+		constructor: function(a){
+			C.prototype.constructor.call(this, a, a);
+		}
+	});
+
+	var F = E.extend({
+		f: true,
+		added: true,
+		passengers: 5,
+		constructor: function(){
+			E.prototype.constructor.call(this, 30);
+		}
+	});
+
+
+
+	insc = new C(10,10)
+	inse = new E(20)
+	insf = new F()
+
+	console.log(insc.width, inse.width, insf.width)
+	insc.width = 999;
+	console.log(insc.width, inse.width, insf.width)
+
+
+	console.log("C", insc instanceof (C), insc instanceof (A), " - ", insc instanceof (B), insc instanceof (N))
+	console.log("E", inse instanceof (E), inse instanceof (A), inse instanceof (B), inse instanceof (C), inse instanceof (D), inse instanceof (N), " - ", inse instanceof (F))
+	console.log("F", insf instanceof (F), insf instanceof (A), insf instanceof (B), insf instanceof (C), insf instanceof (D), insf instanceof (E), " - ", insf instanceof (N))
+
+
+</script>
+
+
+<script type="text/javascript">
+	
+var InheritPerson = Function.extend({
+	test: 1234,
+    constructor: function(name) {
+        this.nome = name;
+    },
+    setAddress: function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    }
+});
+
+var InheritFrenchGuy = InheritPerson.extend({
+        constructor: function (name) {
+          InheritPerson.prototype.constructor.call(this, name);
+        },
+        setAddress: function(city, street) {
+          InheritPerson.prototype.setAddress.call(this, "France", city, street);
+        }
+});
+
+var InheritParisLover = InheritFrenchGuy.extend({
+    constructor: function (name) {
+        InheritFrenchGuy.prototype.constructor.call(this, name);
+    },
+    setAddress: function(street) {
+        InheritFrenchGuy.prototype.setAddress.call(this, "Paris", street);
+        return this;
+    }
+});
+var a = new InheritPerson("a");
+a.setAddress ("me", "la", "suda");
+var b = new InheritFrenchGuy("b");
+b.setAddress ("Burdeos", "street");
+var b2 = new InheritFrenchGuy("b2");
+b2.setAddress ("Burdeos2", "street2");
+var c = new InheritParisLover("c");
+c.setAddress ("MC");
+
+
+console.log(a.nome + b.nome + c.nome == "abc")
+console.log(a.nome + b.nome + b2.nome + c.nome)
+console.log(a.street + b.street + b2.street + c.street)
+
+
+</script>
