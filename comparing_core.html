@@ -1,72 +1,105 @@
 http://jsperf.com/comparing-inherit-js
+http://jsperf.com/comparing-inherit-versions
 
 <script>
-function inherit() {
-	var len = arguments.length;
-	var parent = (len > 1) ? arguments[0] : function(){};
-	var body = arguments[len - 1];
+var inherit = (function() {
+	"use strict";
 
-	body.prototype = Object.create(parent.prototype);
-	var constructor = new body(body.prototype);
-	if (constructor.constructor === undefined) constructor.constructor = function(){};
-	constructor.constructor.prototype = constructor;
-	return constructor.constructor;
-}
+	var getprototype = function(obj) {
+		return (typeof obj === "object") ? 
+			obj
+		:
+			((obj.hasOwnProperty('constructor')) ?
+				obj.prototype 
+			: 
+				new obj);
+	};
+
+	return function() {
+
+		var len = arguments.length;
+		var parent = (len > 1) ? arguments[0] : function(){};
+		var bodyelement = arguments[len - 1];
+		var parentprototype = getprototype(parent);
+		
+		if (typeof bodyelement === 'object') {
+			var body = function(){};
+			body.prototype = bodyelement;
+		}
+		else {
+			var body = bodyelement;
+			body.prototype = Object.create(parentprototype);
+		}
+
+		var prototype = new body(body.prototype);
+		if (prototype.constructor === undefined) prototype.constructor = function(){};
+		prototype.constructor.prototype = prototype;
+		return prototype.constructor;
+	};
+})();
 
 
 
 
 
-
-
-var InheritPerson = inherit(function () {
+var personobj = {
+	local:"local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+};
+var personfunction = function() {
     this.local = "local1";
     this.getlocal = function(){
         return this.local + '---';
     };
-    this.getnotbydefault = function(){
-        return this.notbydefault + '---';
-    };
-    this.constructor = function(name) {
-        this.name = name;
+    this.constructor = function(nome) {
+        this.nome = nome;
     };
     this.setAddress = function(country, city, street) {
         this.country = country;
         this.city = city;
         this.street = street;
     };
-});
+}
+
+var InheritPerson = inherit(personfunction);
 
 var InheritFrenchGuy = inherit(InheritPerson, function(base) {
-    this.local = "local2";
-    this.getlocal = function(){
-        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
-    };
-    this.getnotbydefault = function(){
-        return this.notbydefault + ' ' + base.notbydefault + ',' + base.getnotbydefault() + '---';
-    };
-    this.constructor = function (name) {
-        base.constructor.call(this, name);
-    };
-    this.setAddress = function(city, street) {
-        base.setAddress.call(this, "France", city, street);
-    };
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		base.constructor.call(this, nome);
+	};
+	this.setAddress = function(city, street) {
+		base.setAddress.call(this, "France", city, street);
+	};
 });
 
 var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
-    this.local = "local3";
-    this.getlocal = function(){
-        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
-    };
-    this.change = function(){
-        base.local = "LOCAL2FROMCHILD_"
-    };
-    this.constructor= function (name) {
-        base.constructor.call(this, name);
-    };
-    this.setAddress = function(street) {
-        base.setAddress.call(this, "Paris", street);
-    };
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+	};
+	this.change = function(){
+		base.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		base.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		base.setAddress.call(this, "Paris", street);
+	};
 });
 </script>
 
@@ -87,15 +120,15 @@ testring = [
 
 
 
-var t1 = new InheritPerson2("Name1_");
-var t2 = new InheritFrenchGuy2("Name2_");
-var t2b = new InheritFrenchGuy2("Name2B_");
-var t3 = new InheritParisLover2("Name3_");
+var t1 = new InheritPerson("Name1_");
+var t2 = new InheritFrenchGuy("Name2_");
+var t2b = new InheritFrenchGuy("Name2B_");
+var t3 = new InheritParisLover("Name3_");
 
-console.log('///// Testing .name')
-console.log(t1.name + t2.name + t2b.name + t3.name == testring[0])
-t2.name = "Nam2changed_";
-console.log(t1.name + t2.name + t2b.name + t3.name == testring[1])
+console.log('///// Testing .nome')
+console.log(t1.nome + t2.nome + t2b.nome + t3.nome == testring[0])
+t2.nome = "Nam2changed_";
+console.log(t1.nome + t2.nome + t2b.nome + t3.nome == testring[1])
 
 console.log('.')
 console.log('///// Testing .local')
@@ -110,7 +143,7 @@ console.log('.')
 console.log('///// Changing property from the child')
 t3.change();
 console.log(t1.getlocal() +' '+ t2.getlocal() +' '+ t2b.getlocal() +' '+ t3.getlocal() == testring[4])
-var t2c = new InheritFrenchGuy2("Name2B_");
+var t2c = new InheritFrenchGuy("Name2B_");
 console.log(t2c.getlocal() == testring[5])
 
 console.log('.')
@@ -127,11 +160,9 @@ console.log(t3.country + ' ' + t3.city + ' ' + t3.street + ',' + t2.country + ' 
 
 console.log('.')
 console.log('///// Testing instanceof')
-console.log((t1 instanceof InheritPerson2)+' '+ (t1 instanceof InheritFrenchGuy2) +' '+ (t1 instanceof InheritParisLover2))
-console.log((t2 instanceof InheritPerson2)+' '+ (t2 instanceof InheritFrenchGuy2) +' '+ (t2 instanceof InheritParisLover2))
-console.log((t3 instanceof InheritPerson2)+' '+ (t3 instanceof InheritFrenchGuy2) +' '+ (t3 instanceof InheritParisLover2))
-
-
+console.log((t1 instanceof InheritPerson)+' '+ (t1 instanceof InheritFrenchGuy) +' '+ (t1 instanceof InheritParisLover))
+console.log((t2 instanceof InheritPerson)+' '+ (t2 instanceof InheritFrenchGuy) +' '+ (t2 instanceof InheritParisLover))
+console.log((t3 instanceof InheritPerson)+' '+ (t3 instanceof InheritFrenchGuy) +' '+ (t3 instanceof InheritParisLover))
 
 
 

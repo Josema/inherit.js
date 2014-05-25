@@ -11,17 +11,18 @@ testring = [
 'France Paris Street3,France City2 Street2',
 'France Paris Street3,France City2 Street2,Country1 City1 Street1'
 ]
-function inherit() {
+var inherit = function() {
+    'use strict';
     var len = arguments.length;
     var parent = (len > 1) ? arguments[0] : function(){};
     var body = arguments[len - 1];
 
     body.prototype = Object.create(parent.prototype);
-    var constructor = new body(body.prototype);
-    if (constructor.constructor === undefined) constructor.constructor = function(){};
-    constructor.constructor.prototype = constructor;
-    return constructor.constructor;
-}
+    var prototype = new body(body.prototype);
+    if (prototype.constructor === undefined) prototype.constructor = function(){};
+    prototype.constructor.prototype = prototype;
+    return prototype.constructor;
+};
 var augment = (function (bind, call) {
     "use strict";
 
@@ -534,8 +535,8 @@ console.log(4.2, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country
 E1.setAddress("Country1", "City1", "Street1");
 console.log(4.3, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country + ' ' + E2.city + ' ' + E2.street + ',' + E1.country + ' ' + E1.city + ' ' + E1.street == testring[8])
 
-console.log(5.1, (E1 instanceof RaptorPerson)+' '+ (E1 instanceof RaptorFrenchGuy) +' '+ (E1 instanceof RaptorParisLover))
-console.log(5.2, (E2 instanceof RaptorPerson)+' '+ (E2 instanceof RaptorFrenchGuy) +' '+ (E2 instanceof RaptorParisLover))
-console.log(5.3, (E3 instanceof RaptorPerson)+' '+ (E3 instanceof RaptorFrenchGuy) +' '+ (E3 instanceof RaptorParisLover))
+console.log(5.1, (E1.instanceof (OExtendPerson))+' '+ (E1.instanceof (OExtendFrenchGuy)) +' '+ (E1.instanceof(OExtendParisLover)))
+console.log(5.2, (E2.instanceof (OExtendPerson))+' '+ (E2.instanceof (OExtendFrenchGuy)) +' '+ (E2.instanceof(OExtendParisLover)))
+console.log(5.3, (E3.instanceof (OExtendPerson))+' '+ (E3.instanceof (OExtendFrenchGuy)) +' '+ (E3.instanceof(OExtendParisLover)))
 
 </script>
