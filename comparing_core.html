@@ -2,40 +2,7 @@ http://jsperf.com/comparing-inherit-js
 http://jsperf.com/comparing-inherit-versions
 
 <script>
-var inherit = (function() {
-	"use strict";
-
-	var getprototype = function(obj) {
-		return (typeof obj === "object") ? 
-			obj
-		:
-			((obj.prototype.hasOwnProperty('constructor')) ?
-				obj.prototype 
-			: 
-				new obj());
-	};
-
-	return function() {
-
-		var len = arguments.length,
-			parent = (len > 1) ? arguments[0] : function(){},
-			bodyelement = arguments[len - 1];
-		
-		if (typeof bodyelement === 'object') {
-			var body = function(){};
-			body.prototype = bodyelement;
-		}
-		else {
-			var body = bodyelement;
-			body.prototype = Object.create(getprototype(parent));
-		}
-
-		var prototype = new body(body.prototype);
-		if (prototype.constructor === undefined) prototype.constructor = function(){};
-		prototype.constructor.prototype = prototype;
-		return prototype.constructor;
-	};
-})();
+var inherit=(function(){var d="object",b="prototype",e="constructor",a=function(c){return(typeof c===d)?c:((c[b].hasOwnProperty(e)&&c[b][e]!==c)?c[b]:new c())};return function(){var f=arguments.length,h=(f>1)?arguments[0]:function(){},i=arguments[f-1],c;if(typeof i===d){c=function(){};c[b]=i}else{c=i;c[b]=Object.create(a(h))}var g=new c(c[b]);g[e][b]=g;return g[e]}})();
 
 
 
@@ -70,12 +37,12 @@ var personfunction = function() {
     };
 }
 
-var InheritPerson = inherit(personfunction);
+var InheritPerson = inherit(personobj);
 
-var InheritFrenchGuy = inherit(personfunction, function(base) {
+var InheritFrenchGuy = inherit(InheritPerson, function(base) {
 	this.local = "local2";
 	this.getlocal = function(){
-		return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+		return this.local + ' ' +  base.local + ',' + base.getlocal() + '---';
 	};
 	this.constructor = function (nome) {
 		base.constructor.call(this, nome);
@@ -100,11 +67,11 @@ var InheritParisLover = inherit(InheritFrenchGuy, function(base) {
 		base.setAddress.call(this, "Paris", street);
 	};
 });
-</script>
 
 
 
-<script>
+
+
 testring = [
 'Name1_Name2_Name2B_Name3_',
 'Name1_Nam2changed_Name2B_Name3_',
@@ -123,6 +90,7 @@ var t1 = new InheritPerson("Name1_");
 var t2 = new InheritFrenchGuy("Name2_");
 var t2b = new InheritFrenchGuy("Name2B_");
 var t3 = new InheritParisLover("Name3_");
+
 
 console.log('///// Testing .nome')
 console.log(t1.nome + t2.nome + t2b.nome + t3.nome == testring[0])
@@ -162,8 +130,5 @@ console.log('///// Testing instanceof')
 console.log((t1 instanceof InheritPerson)+' '+ (t1 instanceof InheritFrenchGuy) +' '+ (t1 instanceof InheritParisLover))
 console.log((t2 instanceof InheritPerson)+' '+ (t2 instanceof InheritFrenchGuy) +' '+ (t2 instanceof InheritParisLover))
 console.log((t3 instanceof InheritPerson)+' '+ (t3 instanceof InheritFrenchGuy) +' '+ (t3 instanceof InheritParisLover))
-
-
-
 
 </script>
