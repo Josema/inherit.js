@@ -7,6 +7,7 @@
    * instanceof
  */
 
+/*jslint newcap:true */ 
 var inherit = function() {
 	'use strict';
 	var len = arguments.length,

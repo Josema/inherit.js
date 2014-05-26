@@ -9,20 +9,22 @@
    * inherit native functions (not using inherit on the super class)
  */
 
+
+/*jslint newcap:true */ 
 var inherit = (function() {
 	'use strict';
 
 	var o = 'object',
 		p = 'prototype',
 		c = 'constructor',
-		getprototype = function(object) {
-			return (typeof object === o) ? 
-				object
+		getprototype = function(objfun) {
+			return (typeof objfun === o) ? 
+				objfun
 			:
-				((object[p].hasOwnProperty(c) && object[p][c] !== object) ?
-					object[p] 
+				((objfun[p].hasOwnProperty(c) && objfun[p][c] !== objfun) ?
+					objfun[p] 
 				: 
-					new object());
+					new objfun());
 		};
 
 	return function() {
@@ -49,7 +51,7 @@ var inherit = (function() {
 
 
 /*
-NO COMPRESS:
+NO COMPRESSED:
 var inherit = (function() {
 	'use strict';
 
