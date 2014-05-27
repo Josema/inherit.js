@@ -1,12 +1,12 @@
-// inherit lite v1.0
+// inherit lite v1.1
 /*
    * private vars
    * super
    * constructor
    * constructor opcional
    * instanceof
-   * inherit objects (inherit objects break the instance of feature)
-   * inherit native functions (not using inherit on the super class)
+   * inherit objects (inherit objects break the instanceof feature)
+   * inherit native functions (not working methods and properties declared on the prototype)
  */
 
 
@@ -15,17 +15,17 @@ var inherit = (function() {
 	'use strict';
 
 	var o = 'object',
-		p = 'prototype',
-		c = 'constructor',
-		getprototype = function(objfun) {
-			return (typeof objfun === o) ? 
-				objfun
-			:
-				((objfun[p].hasOwnProperty(c) && objfun[p][c] !== objfun) ?
-					objfun[p] 
-				: 
-					new objfun());
-		};
+	    p = 'prototype',
+	    c = 'constructor',
+	    getprototype = function(objfun) {
+	    	return (typeof objfun === o) ? 
+	    		objfun
+	    	:
+	    		((Object.getOwnPropertyNames(objfun[p]).length > 1) ?
+	    			Object.create(objfun[p])
+	    		: 
+	    			new objfun());
+	    };
 
 	return function() {
 
@@ -40,7 +40,7 @@ var inherit = (function() {
 		}
 		else {
 			body = bodyelement;
-			body[p] = Object.create(getprototype(parent));
+			body[p] = getprototype(parent);
 		}
 
 		var prototype = new body(body[p]);

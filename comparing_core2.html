@@ -2,60 +2,33 @@ http://jsperf.com/comparing-inherit-js
 http://jsperf.com/comparing-inherit-versions
 
 <script>
-/*
-object - object
-object - function
-object - functionnative
-function - object
-function - function
-function - functionnative
-functionnative - object
-functionnative - function
-functionnative - functionnative
-*/
 
-var inherit = (function() {
+
+var inherit = function() {
 	'use strict';
 
-	var createconstructor = function(objfun) {
-		var constructor;
-		if (typeof objfun === 'object') {
-			constructor = function(){};
-			constructor.prototype = objfun;
-		}
-		else {
-			constructor = objfun;
-			constructor.prototype = new objfun();
-		}
-		return constructor;
-	};
+	var o = 'object',
+	    p = 'prototype',
+	    c = 'constructor',
+	    len = arguments.length,
+	    parent = arguments[0],
+	    bodyelement = (len > 1) ? arguments[len - 1] : function(){},
+	    body;
 
-	return function() {
-		var args = arguments,
-			p = 'prototype';
+	if (typeof bodyelement === o) {
+		body = function(){};
+		body[p] = bodyelement;
+	}
+	else {
+		body = bodyelement;
+		body[p] = (typeof parent === o) ? parent : new parent();
+	}
 
-		if (args.length > 2) {
-			Array[p].splice.call(args, 0, 2, inherit(args[0], args[1]));
-			return inherit.apply(null, args);
-		}
+	var prototype = new body(body[p]);
+	prototype[c][p] = prototype;
+	return prototype[c];
 
-		var o = 'object',
-		    c = 'constructor',
-		    parent = createconstructor(args[0]),
-		    body = (args.length == 2) ? createconstructor(args[1]) : function(){};
-
-		var base = Object.create(parent[p]);
-		for (var property in body[p])
-			if (body[p].hasOwnProperty(property))
-				parent[p][property] = body[p][property];
-
-		body[p] = Object.create(parent[p]);
-		var prototype = new body(base);
-		prototype[c][p] = prototype;
-		return prototype[c];
-	};
-
-})();
+};
 
 
 
