@@ -5,31 +5,37 @@ http://jsperf.com/comparing-inherit-versions
 
 
 var inherit = function() {
-	'use strict';
+    'use strict';
 
-	var o = 'object',
-	    p = 'prototype',
-	    c = 'constructor',
-	    len = arguments.length,
-	    parent = arguments[0],
-	    bodyelement = (len > 1) ? arguments[len - 1] : function(){},
-	    body;
+    var o = 'object',
+        p = 'prototype',
+        c = 'constructor',
+        newfunction = function(){},
+        args = arguments,
+        parent = args[0],
+        bodyclass = (args.length == 2) ? args[1] : newfunction,
+        parentisobject = typeof parent === o,
+        body,
+        newproto,
+        hasconstructor;
 
-	if (typeof bodyelement === o) {
-		body = function(){};
-		body[p] = bodyelement;
-	}
-	else {
-		body = bodyelement;
-		body[p] = (typeof parent === o) ? parent : new parent();
-	}
+    if (typeof bodyclass === o) {
+        body = newfunction;
+        body[p] = bodyclass;
+    }
+    else {
+        body = bodyclass;
+        body[p] = (parentisobject) ? parent : new parent();
+    }
 
-	var prototype = new body(body[p]);
-	prototype[c][p] = prototype;
-	return prototype[c];
+    newproto = new body(body[p]);
+    hasconstructor = !newproto.hasOwnProperty(c);
+    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject))
+    	newproto[c] = newfunction;
 
+    newproto[c][p] = newproto;
+    return newproto[c];
 };
-
 
 
 
@@ -50,6 +56,10 @@ var personobj = {
 var personfunction = function() {
     this.local = "local1";
     this.testing = "0000000";
+    var privatevar1 = 'privatevar1';
+    this.getprivate = function(){
+		return privatevar1;
+	};
     this.getlocal = function(){
         return this.local + '---';
     };
@@ -75,6 +85,13 @@ var InheritPerson = inherit(personfunction);
 
 var InheritFrenchGuy = inherit(InheritPerson, function(base) {
 	this.local = "local2";
+	var privatevar2 = 'privatevar2';
+	this.method2 = function(){
+		return '123';
+	};
+	this.getprivate = function(){
+		return privatevar2 + " " + base.getprivate();
+	};
 	this.getlocal = function(){
 		return this.local + ' ' +  base.local + ',' + base.getlocal() + '---';
 	};
@@ -125,7 +142,7 @@ var t2 = new InheritFrenchGuy("Name2_");
 var t2b = new InheritFrenchGuy("Name2B_");
 var t3 = new InheritParisLover("Name3_");
 
-
+console.log('Getprivates: ', t2.getprivate())
 console.log('///// Testing .nome')
 console.log(t1.nome + t2.nome + t2b.nome + t3.nome == testring[0])
 t2.nome = "Nam2changed_";

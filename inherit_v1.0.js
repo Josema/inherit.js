@@ -3,7 +3,6 @@
    * private vars
    * super
    * constructor
-   * constructor opcional
    * instanceof
  */
 

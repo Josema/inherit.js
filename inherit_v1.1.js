@@ -3,7 +3,6 @@
    * private vars
    * super
    * constructor
-   * constructor opcional
    * instanceof
    * inherit objects (inherit objects break the instanceof feature)
    * inherit native functions (not working methods and properties declared on the prototype)

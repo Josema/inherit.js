@@ -5,7 +5,7 @@
    * constructor
    * constructor opcional
    * instanceof
-   * inherit objects (inherit objects break the instanceof feature)
+   * inherit objects (inherit objects without inherit wrapper breaks the instanceof feature)
    * inherit native functions
    * inherit native functions as prototype definitions
  */
@@ -18,23 +18,32 @@ var inherit = function() {
     var o = 'object',
         p = 'prototype',
         c = 'constructor',
+        newfunction = function(){},
         args = arguments,
         parent = args[0],
-        bodyelement = (args.length == 2) ? args[1] : function(){},
+        bodyclass = (args.length == 2) ? args[1] : newfunction,
+        parentisobject = typeof parent === o,
         body,
-        newproto;
+        newproto,
+        hasconstructor;
 
-    if (typeof bodyelement === o) {
-        body = function(){};
-        body[p] = bodyelement;
+    if (typeof bodyclass === o) {
+        body = newfunction;
+        body[p] = bodyclass;
     }
     else {
-        body = bodyelement;
-        body[p] = (typeof parent === o) ? parent : new parent();
+        body = bodyclass;
+        body[p] = (parentisobject) ? parent : new parent();
     }
 
     newproto = new body(body[p]);
+    hasconstructor = !newproto.hasOwnProperty(c);
+    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject))
+    	newproto[c] = newfunction;
+
     newproto[c][p] = newproto;
     return newproto[c];
 };
+
+
 
