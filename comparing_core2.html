@@ -30,11 +30,12 @@ var inherit = function() {
 
     newproto = new body(body[p]);
     hasconstructor = !newproto.hasOwnProperty(c);
-    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject))
+    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject) )
     	newproto[c] = newfunction;
 
     newproto[c][p] = newproto;
     return newproto[c];
+
 };
 
 

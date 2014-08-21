@@ -2,61 +2,62 @@ http://jsperf.com/comparing-inherit-js
 http://jsperf.com/comparing-inherit-versions
 
 <script>
-/*
-object - object
-object - function
-object - functionnative
-function - object
-function - function
-function - functionnative
-functionnative - object
-functionnative - function
-functionnative - functionnative
-*/
+
 
 var inherit = (function() {
-	'use strict';
+    'use strict';
 
-	var createconstructor = function(objfun) {
-		var constructor;
-		if (typeof objfun === 'object') {
-			constructor = function(){};
-			constructor.prototype = objfun;
-		}
-		else {
-			constructor = objfun;
-			constructor.prototype = new objfun();
-		}
-		return constructor;
+    var createconstructor = function(objfun) {
+		return (typeof objfun === 'object') ? Object.create(objfun) : new objfun();
 	};
 
-	return function() {
-		var args = arguments,
-			p = 'prototype';
+    return function() {
 
-		if (args.length > 2) {
-			Array[p].splice.call(args, 0, 2, inherit(args[0], args[1]));
-			return inherit.apply(null, args);
-		}
+	    var o = 'object',
+	        p = 'prototype',
+	        c = 'constructor',
+	        newfunction = function(){},
+	        args = arguments,
+	        parent = args[0],
+	        bodyclass = (args.length == 1) ? newfunction : args[args.length-1],
+	        parentisobject = typeof parent === o,
+	        body,
+	        newproto,
+	        hasconstructor;
 
-		var o = 'object',
-		    c = 'constructor',
-		    parent = createconstructor(args[0]),
-		    body = (args.length == 2) ? createconstructor(args[1]) : function(){};
+	    if (typeof bodyclass === o) {
+	        body = newfunction;
+	        body[p] = bodyclass;
+	    }
+	    else {
+	        body = bodyclass;
+	        body[p] = createconstructor(parent);
+	    }
 
-		var base = Object.create(parent[p]);
-		for (var property in body[p])
-			if (body[p].hasOwnProperty(property))
-				parent[p][property] = body[p][property];
 
-		body[p] = Object.create(parent[p]);
-		var prototype = new body(base);
-		prototype[c][p] = prototype;
-		return prototype[c];
-	};
+	    var superall = [body[p]];
+	    for (var i=1; i<args.length-1; ++i)
+			superall.push(createconstructor(args[i]));
+
+	    newproto = new body(body[p], superall);
+	    hasconstructor = !newproto.hasOwnProperty(c);
+	    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject) )
+	    	newproto[c] = newfunction;
+
+	    newproto[c][p] = newproto;
+
+		for (var i=1; i<superall.length; ++i)
+			for (var property in superall[i])
+				if (property !== c)
+					newproto[c][p][property] = superall[i][property];
+
+
+	    
+	    return newproto[c];
+
+	}
 
 })();
-
 
 
 
@@ -93,15 +94,18 @@ personfunction.prototype.testing = "12345678";
 personfunction.prototype.caca = 'personfunction';
 
 
-function multi1(){this.multivar1="a";}
+function multi1(){this.multivar1="a"; this.constructor=function(){alert("cagada")}}
 var multi2 = function (){}
 multi2.prototype.multivar2 = "b";
 multi3 = {multivar3:"c"}
 
 var InheritPerson = inherit(personfunction);
 
-var InheritFrenchGuy = inherit(InheritPerson, function(base) {
+var InheritFrenchGuy = inherit(InheritPerson, multi1, multi2, multi3, function(base, baseall) {
 	this.local = "local2";
+	this.getbases = function(){
+		return baseall;
+	};
 	this.getlocal = function(){
 		return this.local + ' ' +  base.local + ',' + base.getlocal() + '---';
 	};

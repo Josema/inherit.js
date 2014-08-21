@@ -3,85 +3,45 @@
    * private vars
    * super
    * constructor
+   * constructor opcional
    * instanceof
-   * inherit objects (inherit objects break the instanceof feature)
-   * inherit native functions (not working methods and properties declared on the prototype)
+   * inherit objects (inherit objects directly breaks the instanceof feature)
+   * inherit native functions
+   * inherit native functions as prototype definitions
  */
 
 
 /*jslint newcap:true */ 
-var inherit = (function() {
-	'use strict';
+var inherit = function() {
+    'use strict';
 
-	var o = 'object',
-	    p = 'prototype',
-	    c = 'constructor',
-	    getprototype = function(objfun) {
-	    	return (typeof objfun === o) ? 
-	    		objfun
-	    	:
-	    		((Object.getOwnPropertyNames(objfun[p]).length > 1) ?
-	    			Object.create(objfun[p])
-	    		: 
-	    			new objfun());
-	    };
+    var o = 'object',
+        p = 'prototype',
+        c = 'constructor',
+        newfunction = function(){},
+        args = arguments,
+        parent = args[0],
+        bodyclass = (args.length == 1) ? newfunction : args[1],
+        parentisobject = typeof parent === o,
+        body,
+        newproto,
+        hasconstructor;
 
-	return function() {
+    if (typeof bodyclass === o) {
+        body = newfunction;
+        body[p] = bodyclass;
+    }
+    else {
+        body = bodyclass;
+        body[p] = (parentisobject) ? parent : new parent();
+    }
 
-		var len = arguments.length,
-			parent = (len > 1) ? arguments[0] : function(){},
-			bodyelement = arguments[len - 1],
-			body;
+    newproto = new body(body[p]);
+    hasconstructor = !newproto.hasOwnProperty(c);
+    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject) )
+    	newproto[c] = newfunction;
 
-		if (typeof bodyelement === o) {
-			body = function(){};
-			body[p] = bodyelement;
-		}
-		else {
-			body = bodyelement;
-			body[p] = getprototype(parent);
-		}
+    newproto[c][p] = newproto;
+    return newproto[c];
 
-		var prototype = new body(body[p]);
-		prototype[c][p] = prototype;
-		return prototype[c];
-	};
-})();
-
-
-/*
-NO COMPRESSED:
-var inherit = (function() {
-	'use strict';
-
-	var getprototype = function(obj) {
-		return (typeof obj === 'object') ? 
-			obj
-		:
-			((obj.prototype.hasOwnProperty('constructor') && obj.prototype.constructor !== obj) ?
-				obj.prototype 
-			: 
-				new obj());
-	};
-
-	return function() {
-
-		var len = arguments.length,
-			parent = (len > 1) ? arguments[0] : function(){},
-			bodyelement = arguments[len - 1];
-
-		if (typeof bodyelement === 'object') {
-			var body = function(){};
-			body.prototype = bodyelement;
-		}
-		else {
-			var body = bodyelement;
-			body.prototype = Object.create(getprototype(parent));
-		}
-
-		var prototype = new body(body.prototype);
-		prototype.constructor.prototype = prototype;
-		return prototype.constructor;
-	};
-})();
-*/
+};
