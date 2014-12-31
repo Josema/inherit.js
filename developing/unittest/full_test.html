@@ -1,0 +1,793 @@
+
+<script>
+!function(a,b,c,d,e,f,g,h,i){"use strict";function j(a){return a&&typeof a===b&&!(typeof a.length===c&&!a.propertyIsEnumerable(d))}function k(a){return a&&typeof a===b&&typeof a.length===c&&!a.propertyIsEnumerable(d)}function l(a){return a&&"function"==typeof a}function m(a){return"[object String]"===e.apply(a)}function n(a){return l(a)&&a.prototype&&a===a.prototype.constructor}function o(a,b,c,d,e,f){c&&c.hasOwnProperty(a)||(d[a]=b,e&&(f[a]=b))}function p(a,b,c){if(k(b))for(var d=b.length;--d>=0;)p(a,b[d],c);else{c=c||{constructor:1,$super:1,prototype:1,$superb:1};var e,f,g=n(a),h=n(b),i=a.prototype;if(j(b))for(e in b)o(e,b[e],c,a,g,i);if(h){f=b.prototype;for(e in f)o(e,f[e],c,a,g,i)}g&&h&&p(i,b.prototype,c)}}function q(a,b){b||(b=a,a=0);var c,d,e,f,g,h,i,j,m=0,n={constructor:1,$singleton:1,$statics:1,prototype:1,$super:1,$superp:1,main:1,toString:0},o=q.overload,p=q.plugins;b=("function"==typeof b?b():b)||{},d=b.hasOwnProperty("constructor")?b.constructor:0,e=b.$singleton,f=b.$statics;for(g in p)n[g]=1;for(c=e?{}:d?o?o("constructor",d):d:function(){},h=e?c:c.prototype,a=!a||k(a)?a:[a],i=a&&a.length;i>m;){j=a[m++];for(g in j)n[g]||(h[g]=j[g],e||(c[g]=j[g]));for(g in j.prototype)n[g]||(h[g]=j.prototype[g])}for(g in b)n[g]||(h[g]=b[g]);for(g in f)c[g]=h[g]=f[g];e||(j=a&&a[0]||a,c.$super=j,c.$superp=j&&j.prototype?j.prototype:j);for(g in p)p[g](c,a,b);return l(b.main)&&b.main.call(c,c),c}q.plugins={},i={version:f,Class:q,extend:p,isMap:j,isArray:k,isFunction:l,isString:m,isClass:n},"undefined"!=typeof module&&module.exports?module.exports=i:(h=a.Class,a.Class=q,a.jsface=i,i.noConflict=function(){a.Class=h})}(this,"object","number","length",Object.prototype.toString,"2.1.1"),!function(Lineage,global){"use strict";function Lineage_define(){var a,b,c,d,e,f,g,h,i,j;for(e=0,a=arguments[e],isString(a)&&(b=a,++e,a=arguments[e]),isFunction(a)&&a._isConstructor&&(c=a,d=c.prototype,++e),f=generateCtor(b,c),g=f.prototype;e<arguments.length;){if(a=arguments[e++],isFunction(a)){if(a._isConstructor)throw"Invalid specification object factory function; check order of arguments to `Lineage.define`";a=a(g,d,f,c),(isObject(a)||a===g)&&(a=void 0)}if(isObject(a))for(h=getNames(a),i=h.length-1;i>=0;--i)j=h[i],g[j]=a[j]}return"initialize"in f.prototype||(f.prototype.initialize=createNoop()),f}function Lineage_noConflict(a){return global.Lineage===Lineage&&(global.Lineage=oldLineage),isFunction(a)&&a(Lineage),Lineage}function isString(a){return"[object String]"===getTypeString.call(a)}function isFunction(a){return"function"==typeof a}function isObject(a){return"object"==typeof a}function createProto(){}function generateCtor(name,parentCtor){var ctor;return ctor=name?eval("(function() {\n    function "+name+"() {\n        // Lineage-generated constructor: Call the initialize function\n        this.initialize.apply(this, arguments);\n    }\n    return "+name+";\n})();"):function(){this.initialize.apply(this,arguments)},parentCtor&&(createProto.prototype=parentCtor.prototype,ctor.prototype=new createProto,createProto.prototype={}),ctor.prototype.constructor=ctor,ctor._isConstructor=!0,ctor}function createNoop(){return function(){}}function getNames(a){var b,c,d;b=[],d=0;for(c in a)b[d++]=c;return toStringProblematic&&void 0!==a.toString&&(b[d++]="toString"),valueOfProblematic&&void 0!==a.valueOf&&(b[d++]="valueOf"),b}Lineage.copyright='lineage.js - http://code.google.com/p/lineagejs | Copyright (C) 2009-2012 by Thomas ("T.J.") Crowder (tj@crowdersoftware.com) | Licensed under the "MIT License": | Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: | The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. | THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.';var toStringProblematic,valueOfProblematic,getTypeString,oldLineage;return getTypeString=Object.prototype.toString,oldLineage=global.Lineage,global.Lineage=Lineage,Lineage.version="0.4.1",Lineage.define=Lineage_define,Lineage.noConflict=Lineage_noConflict,function(){var a;toStringProblematic=valueOfProblematic=!0;for(a in{toString:!0,valueOf:!0})"toString"===a&&(toStringProblematic=!1),"valueOf"===a&&(valueOfProblematic=!1)}(),Lineage}({},this),!function(){my={},my.Class=function(){var c,d,e=arguments.length,f=arguments[e-1],g=e>1?arguments[0]:null,h=e>2;if(f.constructor===Object?c=function(){}:(c=f.constructor,delete f.constructor),g&&(d=function(){},d.prototype=g.prototype,c.prototype=new d,c.prototype.constructor=c,c.Super=g,b(c,g,!1)),h)for(var i=1;e-1>i;i++)b(c.prototype,arguments[i].prototype,!1);return a(c,f),c};var a=my.extendClass=function(a,c,d){c.STATIC&&(b(a,c.STATIC,d),delete c.STATIC),b(a.prototype,c,d)},b=function(a,b,c){var d;if(c===!1)for(d in b)d in a||(a[d]=b[d]);else{for(d in b)a[d]=b[d];b.toString!==Object.prototype.toString&&(a.toString=b.toString)}}}(),!function(){var a=!1,b=/xyz/.test(function(){})?/\b_super\b/:/.*/;this.JRClass=function(){},JRClass.extend=function(c){function d(){!a&&this.init&&this.init.apply(this,arguments)}var e=this.prototype;a=!0;var f=new this;a=!1;for(var g in c)f[g]="function"==typeof c[g]&&"function"==typeof e[g]&&b.test(c[g])?function(a,b){return function(){var c=this._super;this._super=e[a];var d=b.apply(this,arguments);return this._super=c,d}}(g,c[g]):c[g];return d.prototype=f,d.constructor=d,d.extend=arguments.callee,d}}(),function(){var a=function(a){return a=+a,a!==a?a=0:0!==a&&a!==1/0&&a!==-1/0&&(a=(a>0||-1)*Math.floor(Math.abs(a))),a},b="a"!="a"[0],c=function(a){if(null==a)throw new TypeError("can't convert "+a+" to object");return b&&"string"==typeof a&&a?a.split(""):Object(a)},d=Function.prototype.call,e=Array.prototype,f=Object.prototype,g=e.slice;Function.prototype.bind||(Function.prototype.bind=function(a){var b=this;if("function"!=typeof b)throw new TypeError("Function.prototype.bind called on incompatible "+b);var c=g.call(arguments,1),d=function(){if(this instanceof d){var e=function(){};e.prototype=b.prototype;var f=new e,h=b.apply(f,c.concat(g.call(arguments)));return Object(h)===h?h:f}return b.apply(a,c.concat(g.call(arguments)))};return d});var h=d.bind(f.toString),i=d.bind(f.hasOwnProperty);if(Array.isArray||(Array.isArray=function(a){return"[object Array]"==h(a)}),Array.prototype.forEach||(Array.prototype.forEach=function(a){var b=c(this),d=arguments[1],e=-1,f=b.length>>>0;if("[object Function]"!=h(a))throw new TypeError;for(;++e<f;)e in b&&a.call(d,b[e],e,b)}),Array.prototype.map||(Array.prototype.map=function(a){var b=c(this),d=b.length>>>0,e=Array(d),f=arguments[1];if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");for(var g=0;d>g;g++)g in b&&(e[g]=a.call(f,b[g],g,b));return e}),Array.prototype.filter||(Array.prototype.filter=function(a){var f,b=c(this),d=b.length>>>0,e=[],g=arguments[1];if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");for(var i=0;d>i;i++)i in b&&(f=b[i],a.call(g,f,i,b)&&e.push(f));return e}),Array.prototype.every||(Array.prototype.every=function(a){var b=c(this),d=b.length>>>0,e=arguments[1];if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");for(var f=0;d>f;f++)if(f in b&&!a.call(e,b[f],f,b))return!1;return!0}),Array.prototype.some||(Array.prototype.some=function(a){var b=c(this),d=b.length>>>0,e=arguments[1];if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");for(var f=0;d>f;f++)if(f in b&&a.call(e,b[f],f,b))return!0;return!1}),Array.prototype.reduce||(Array.prototype.reduce=function(a){var b=c(this),d=b.length>>>0;if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");if(!d&&1==arguments.length)throw new TypeError("reduce of empty array with no initial value");var f,e=0;if(arguments.length>=2)f=arguments[1];else for(;;){if(e in b){f=b[e++];break}if(++e>=d)throw new TypeError("reduce of empty array with no initial value")}for(;d>e;e++)e in b&&(f=a.call(void 0,f,b[e],e,b));return f}),Array.prototype.reduceRight||(Array.prototype.reduceRight=function(a){var b=c(this),d=b.length>>>0;if("[object Function]"!=h(a))throw new TypeError(a+" is not a function");if(!d&&1==arguments.length)throw new TypeError("reduceRight of empty array with no initial value");var e,f=d-1;if(arguments.length>=2)e=arguments[1];else for(;;){if(f in b){e=b[f--];break}if(--f<0)throw new TypeError("reduceRight of empty array with no initial value")}do f in this&&(e=a.call(void 0,e,b[f],f,b));while(f--);return e}),Array.prototype.indexOf||(Array.prototype.indexOf=function(b){var d=c(this),e=d.length>>>0;if(!e)return-1;var f=0;for(arguments.length>1&&(f=a(arguments[1])),f=f>=0?f:Math.max(0,e+f);e>f;f++)if(f in d&&d[f]===b)return f;return-1}),Array.prototype.lastIndexOf||(Array.prototype.lastIndexOf=function(b){var d=c(this),e=d.length>>>0;if(!e)return-1;var f=e-1;for(arguments.length>1&&(f=Math.min(f,a(arguments[1]))),f=f>=0?f:e-Math.abs(f);f>=0;f--)if(f in d&&b===d[f])return f;return-1}),!Object.keys){var j=!0,k=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],l=k.length;for(var m in{toString:null})j=!1;Object.keys=function q(a){if("object"!=typeof a&&"function"!=typeof a||null===a)throw new TypeError("Object.keys called on a non-object");var q=[];for(var b in a)i(a,b)&&q.push(b);if(j)for(var c=0,d=l;d>c;c++){var e=k[c];i(a,e)&&q.push(e)}return q}}Date.now||(Date.now=function(){return(new Date).getTime()});var n="   \n\f\r  \u1680\u180e\u2002\u2003\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029";if(!String.prototype.trim||n.trim()){n="["+n+"]";var o=new RegExp("^"+n+n+"*"),p=new RegExp(n+n+"*$");String.prototype.trim=function(){if(void 0===this||null===this)throw new TypeError("can't convert "+this+" to object");return String(this).replace(o,"").replace(p,"")}}}(),function(){var a=String.prototype;a.startsWith||(a.startsWith=function(a,b){var c=this;return b&&(c=c.substring(b)),c.length<a.length?!1:c.substring(0,a.length)==a}),a.endsWith||(a.endsWith=function(a,b){var c=this;return b&&(c=c.substring(b)),c.length<a.length?!1:c.slice(0-a.length)==a})}(),function(){var a,b={},c=function(a){return a&&b[a]||(b[a]={postCreate:[]})},d={},e="/",f={},g=[].slice,h=Array.isArray,i=function(a,b){a||(a={});for(var c in b)b.hasOwnProperty(c)&&(a[c]=b[c]);return a},j=function(a){return"string"==typeof a},k=function(a){return"function"==typeof a},l=function(a,b,c){null!=a&&(a.forEach?a:[a]).forEach(b,c)},m=function(a,b,c){for(var d in a)a.hasOwnProperty(d)&&b.call(c,d,a[d])},n=function(a,b,c){var e,d=k(b)?b():b;return c&&l(c,function(a){(e=a(d))&&(d=e)}),d},o=function(a,b,c){var d=a.prototype,e=function(){},f=j(b)?u(b):b;return i(a,f),e.prototype=f.prototype,a.superclass=e.prototype,a.prototype=new e,c&&i(a.prototype,d),d},p=function(a,b,c){if(!k(a)){var d=a;a=d.init||function(){},i(a.prototype,d)}b&&o(a,b,!0),a.getName=a.getName||function(){return c};var e=a.prototype;return e.constructor=a,e.getClass=function(){return a},a},q=function(){return this._ordinal},r=function(){return this._name},s=function(a){return this._ordinal-a._ordinal},t=function(a,b){if(a.charAt(0)==e&&(a=a.substring(1)),"."==a.charAt(0)){if(!b)return a;var c=b.split(e).slice(0,-1);return l(a.split(e),function(a){".."==a?c.splice(c.length-1,1):"."!=a&&c.push(a)}),c.join(e)}return a.replace(/\./g,e)},u=function(c,e,f){if(e)return u("raptor/loader").load(c,e,f);if(d.hasOwnProperty(c))return d[c];if(a.exists(c)){var g=b[c];return d[c]=n(c,g.factory,g.postCreate)}throw new Error(c+" not found")},v={load:function(a,b){var c=this.normalize;h(a)||(a=[a]);for(var d=0,e=a.length;e>d;d++)a[d]=c(a[d]);return u(a,b)},exists:function(b){return a.exists(this.normalize(b))},find:function(b){return a.find(this.normalize(b))}},w={extend:function(){return z(arguments,this.require,0,1)},Class:function(){return z(arguments,this.require,1)},Enum:function(){return z(arguments,this.require,0,0,1)}},x=function(a){return i(a,w)},y=function(a){return i(a,v)},z=function(b,c,d,e,f){var o,u,v,w,x,B,C,g=0,n=b.length-1,z=[],D=y(function(a,b){return b?D.load(a,b):c(a,v)}),E=new A(D),F=E.exports,G={require:D,exports:F,module:E},H=function(){return l(z,function(a,b){var d;(d=G[a])||(d=c(a,v)),z[b]=d}),z};for(D.normalize=function(a){return t(a,v)};n>g;g++)u=b[g],j(u)?v?w=t(u,v):v=E.id=t(u):h(u)?z=u:f?x=u:w=u.superclass;return C=b[n],e?B=function(b){k(C)&&(C=C.apply(a,H().concat([D,b]))),C&&i(k(b)?b.prototype:b,C)}:(d||w?B=function(a){return w=j(w)?D(w):w,p(a,w,v)}:f&&(h(C)&&(x=C,C=null),B=function(a){a?"object"==typeof a&&(a=p(a,0,v)):a=function(){};var b=a.prototype,c=0,d=function(b,d){return i(a[b]=new d,{_ordinal:c++,_name:b})};if(h(x))l(x,function(b){d(b,a)});else if(x){var e=function(){};e.prototype=b,m(x,function(b,c){a.apply(d(b,e),c||[])})}return a.valueOf=function(b){return a[b]},i(b,{name:r,ordinal:q,compareTo:s}),b.toString==Object.prototype.toString&&(b.toString=r),a}),o=k(C)?function(){var b=C.apply(a,H().concat([D,F,E]));return void 0===b?E.exports:b}:C),a.define(v,o,B)},A=function(a){var b=this;b.require=a,b.exports={}};A.prototype={logger:function(){var a=this;return a.l||(a.l=u("raptor/logging").logger(a.id))}},a={cache:d,inherit:o,extend:i,forEach:l,arrayFromArguments:function(a,b){return a?b?b<a.length?g.call(a,b):[]:g.call(a):[]},forEachEntry:m,createError:function(a,b){var c,d=arguments.length,e=Error;return 2==d?(c=a instanceof e?a:new e(a),c._cause=b):1==d&&(c=a instanceof e?a:new e(a)),c},define:function(b,e,f){if(!b)return n.apply(a,arguments);var h,g=c(b);e&&(g.factory=e),f&&(g.postCreate.push(f),(h=d[b])&&f(h)),"object"==typeof h&&h.toString===Object.prototype.toString&&(h.toString=function(){return"["+b+"]"})},exists:function(a){return b.hasOwnProperty(a)},find:function(b){return a.exists(b)?a.require(b):void 0},require:u,normalize:t,_define:z,props:[v,w]};var B;if("undefined"!=typeof window){B=window;var C=w.require=function(a,b){return u(t(a,b))};define=x(function(){return z(arguments,C)}),require=y(function(a,b){return k(b)?require.load(a,b):u(t(a))}),require.normalize=t,define.amd={}}else B=global,module.exports=a;a.define("raptor",a),i(B,{$rset:function(a,b,c){if("object"==typeof b)m(b,function(b,c){$rset(a,b,c)});else{var d=f[a];d||(d=f[a]={}),void 0!==c?d[b]=c:delete d[b]}},$radd:function(a,b){var c=f[a];c||(c=f[a]=[]),c.push(b)},$rget:function(a,b){var c=f[a];return 2==arguments.length?c&&c[b]:c}}),a.global=B}(),define("raptor/logging",["raptor"],function(){var b=function(){return!1},c={isTraceEnabled:b,isDebugEnabled:b,isInfoEnabled:b,isWarnEnabled:b,isErrorEnabled:b,isFatalEnabled:b,dump:b,trace:b,debug:b,info:b,warn:b,error:b,fatal:b};return{logger:function(){return c},configure:b,voidLogger:c}}),define("raptor/listeners",["raptor"],function(a){"use strict";var i,c=a.forEachEntry,d=Array.isArray,e=a.extend,f=0,g="__lstnrs",h=function(){},j=function(a,b){return a?b?function(){a.apply(b,arguments)}:a:h},k=function(a){var c,b=[];a._listeners.forEach(function(a){a.removed?(c=a.thisObj)&&delete c[g][a.id]:b.push(a)}),a._listeners=b,a._listeners.length||a._onEmpty()},l=function(a,b){b.removed=!0,k(a)},m=function(a,b){return function(){l(a,b)}},n=function(b){return function(d){if(arguments.length){var e=b[d];if(!e)throw a.createError(new Error("Invalid message name: "+d));e.unsubscribe()}else c(b,function(a,b){b.remove()})}},o=function(a,b){this.name=a,this.data=b};o.prototype={getName:function(){return this.name},getData:function(){return this.data}};var p=function(){this._listeners=[],this._onEmpty=h};p.prototype={add:function(a,b,c){var e,i,d=this,h={callback:a,thisObj:b,removed:!1,autoRemove:c,id:f++};e=h.remove=m(d,h),d._listeners.push(h);var j={remove:e};return j.unsubscribe=j.remove,b&&((i=b[g])||(i=b[g]={}),i[h.id]=j),j},publish:function(){var a=arguments,b=this;b._listeners.forEach(function(c){c.removed||(c.callback.apply(c.thisObj,a),c.autoRemove&&l(b,c))})},onEmpty:function(a,b){this._onEmpty=j(a,b)},removeAll:function(){for(var a=this._listeners,b=0;b<a.length;b++)a[b].removed=!0;k(this)}};var q=function(a,b){var c=b._allowed;if(c&&!c[a])throw new Error('Invalid message name of "'+a+'". Allowed messages: '+Object.keys(c).join(", "))},r=function(a){return function(b){var c=[a].concat(Array.prototype.slice.call(arguments));this["function"==typeof b?"subscribe":"publish"].apply(this,c)}},s=function(){this._byName||(this._byName={})};return s.prototype={__observable:!0,registerMessages:function(a,b){this._allowed||(this._allowed={});for(var c=0,d=a.length;d>c;c++){var e=a[c];this._allowed[e]=!0,b&&(this[e]=r(e))}},subscribe:function(a,b,d,e){var g,h,f=this;if("object"==typeof a)return e=d,d=b,g={},c(a,function(a,b){g[a]=f.subscribe(a,b,d,e)}),h={unsubscribe:n(g)},h.remove=h.removeAll=h.unsubscribe,h;q(a,f);var i=f._byName[a];return i||(f._byName[a]=i=new p,i.onEmpty(function(){delete f._byName[a]})),i.add(b,d,e)},unsubscribeAll:function(){var a=this;c(a._byName,function(a,b){b.removeAll()}),a._byName={}},publish:function(a,b){var c;d(b)?c=b:(i.isMessage(a)?(b=a,a=b.getName()):b=i.createMessage(a,b),c=[b.data,b]),q(a,this);var e=this,f=function(a){var b=e._byName[a];b&&b.publish.apply(b,c)};f(a),f("*");var g=a.lastIndexOf(".");return g>=0&&f(a.substring(0,g+1)+"*"),b}},i={Message:o,createListeners:function(){return new p},createObservable:function(a,b){var c=new s;return a&&c.registerMessages(a,b),c},makeObservable:function(a,b,c,d){b||(b=a),b.__observable||e(b,s.prototype),s.call(a),c&&a.registerMessages(c,d)},isObervable:function(a){return a&&a.__observable},createMessage:function(a,b){return new o(a,b)},isMessage:function(a){return a instanceof o},bind:j,unsubscribeFromAll:function(a){var b=a[g];if(b)for(var c in b)b[c].unsubscribe()}}});var inherit=function(){"use strict";var a,b,c,d="object",e="prototype",f="constructor",g=function(){},h=arguments,i=h[0],j=1==h.length?g:h[1],k=typeof i===d;return typeof j===d?(a=g,a[e]=j):(a=j,a[e]=k?i:new i),b=new a(a[e]),c=!b.hasOwnProperty(f),(c&&i===b[f]||c&&k)&&(b[f]=g),b[f][e]=b,b[f]},augment1=function(a,b){"use strict";function c(a){var b="function"==typeof this?this.prototype:this,c=Object.create(b);if(a.apply(c,f(arguments,1).concat(b)),!g(c,"constructor"))return c;var d=c.constructor;return d.prototype=c,d}var d=Function.bindable=a.bind(a),e=Function.callable=d(b),f=Array.from=e(Array.prototype.slice),g=Object.ownPropertyOf=e(Object.hasOwnProperty);return Object.defineProperty(Object.prototype,"augment1",{value:c}),e(c)}(Function.bind,Function.call),augment;!function(a,b){"function"==typeof define&&define.amd?define(b):"object"==typeof module?module.exports=b():a.augment=b()}(this,function(){"use strict";var a=function(){},b=Array.prototype.slice;return augment=function(c,d){var e=a.prototype="function"==typeof c?c.prototype:c,f=new a,g=d.apply(f,b.call(arguments,2).concat(e));if("object"==typeof g)for(var h in g)f[h]=g[h];if(!f.hasOwnProperty("constructor"))return f;var i=f.constructor;return i.prototype=f,i},augment.defclass=function(a){var b=a.constructor;return b.prototype=a,b},augment.extend=function(a,b){return augment(a,function(a){return this.uber=a,b})},augment}),Function.prototype.extend2=function(){for(var a=Object.hasOwnProperty,b=Object.create(this.prototype),c=arguments.length,d=c;d;){var e=arguments[c-d--];for(var f in e)("clones"!==f&&a.call(e,f)||void 0===b[f])&&(b[f]=e[f]);a.call(e,"clones")?e.clones.unshift(b):e.clones=[b]}var g=a.call(b,"constructor")?b.constructor:function(){};return g.prototype=b,g},Object.class=function(a){return a.extend=Object.extend,a.instanceof=Object.instanceof,a.define=Object.define,a},Object.extend=function(){for(var a=Object.hasOwnProperty,b=Object.create(this),c=arguments.length,d=c;d;){var e=arguments[c-d--];for(var f in e)("clones"!==f&&a.call(e,f)||void 0===b[f])&&(b[f]=e[f]);a.call(e,"clones")?e.clones.unshift(b):e.clones=[b]}return b},function(){function a(){}function b(){}var d,e,f;String.prototype.format||(d={},String.prototype.format=function(){for(var a=this,b=arguments,c=b.length;--c>=0;)a=a.replace(d[c]||(d[c]=RegExp("\\{"+c+"\\}","gm")),b[c]);return a},String.format||(String.format=function(a){for(var b=arguments,c=b.length;--c;)a=a.replace(d[c-1]||(d[c-1]=RegExp("\\{"+(c-1)+"\\}","gm")),b[c]);return a}));var g=Function.prototype,h=Array.prototype,i=h.forEach,j=Object.defineProperty,k="function"==typeof Object.defineProperties,l={};if(l=l.__proto__===Object.prototype)try{l={},l.__proto__={Object:1},l=1===l.Object}catch(m){l=!1}if("function"!=typeof Object.getPrototypeOf&&(Object.getPrototypeOf=l?function(a){return a.__proto__}:function(a){return null!=a&&a.constructor&&a!==Object.prototype?a.constructor.prototype===a?Object.prototype:a.constructor.prototype:null}),i||(h.forEach=i=function(a,b){for(var c=0,d=this.length;d>c;++c)a.call(b||this,this[c],c,this)}),g.fastClass=function(a){var d,e,b=this,c=this.prototype;return a=a||function(){this.constructor=function(){b.apply(this,arguments)}},a.prototype=c,d=new a(c,this),d.hasOwnProperty("constructor")||(d.constructor=function(){b.apply(this,arguments)}),e=d.constructor,e.prototype=d,a=null,arguments.length>1&&g.define.apply(e,arguments),e.constructor=e,e},g.inheritWith=l?function(a){var b=this,c=("function"==typeof a?a.call(this,this.prototype,this):a)||{},d=c.hasOwnProperty("constructor")?c.constructor:function(){b.apply(this,arguments)};return d.prototype=c,c.__proto__=this.prototype,a=null,arguments.length>1&&g.define.apply(d,arguments),d.constructor=d,d}:function(b){var f,c=this,d=("function"==typeof b?b.call(this,this.prototype,this):b)||{},e=d.hasOwnProperty("constructor")?d.constructor:function(){c.apply(this,arguments)};return a.prototype=this.prototype,e.prototype=f=new a,b=d,g.define.apply(e,arguments),e.constructor=e,e},g.define=function(b,c){var g,d=this,e=this.prototype;if(b){"function"==typeof b&&(b=b.call(e,this.prototype,this));for(g in b)e[g]=b[g]}return b=null,(arguments.length>2||c)&&(e.hasOwnProperty("__mixins__")||(k?j(e,"__mixins__",{enumerable:!1,value:[],writeable:!1}).__mixins__.__hidden=!0:e.__mixins__=[]))&&i.call(arguments,function(b,c,f,g){if(g="function"==typeof b,g?(a.prototype=b.prototype,f=new b(e,d)):f=b,f){g&&e.__mixins__.push(b);for(var h in f)"constructor"!=h&&"prototype"!=h&&(e[h]=f[h])}}),this},Function.define=function(a,b){var c,d=a||function(){},e=arguments.length>1;return"function"!=typeof a?(d=a.hasOwnProperty("constructor")?a.constructor:function(){},d.prototype=a,e=!0):(a=b,b=null),e&&g.define.apply(d,arguments),c=function(){Function.initMixins(this),d.apply(this,arguments)},c.prototype=d.prototype,c.constructor=c.prototype.constructor=d.constructor=d.prototype.constructor=c,c},g.defineStatic=function(a){if(a)for(var b in a)this[b]=a[b];return this},b.defineStatic({"abstract":!0}),Function.abstract=function(a,c){var d=a||c?function(){"function"==typeof a&&a.apply(this,arguments),"function"==typeof c&&c.apply(this,arguments),"string"==typeof a||b()}.defineStatic({"abstract":!0}):b;return d},Function.initMixins=function(a){if(a&&!a.__initMixins__){var c,d,e,f,b=a,g={};for(a.__initMixins__=1;b;)if(b=l?b.__proto__:Object.getPrototypeOf(b),b&&b.hasOwnProperty("__mixins__")&&(c=b.__mixins__)&&(d=c.length))for(e=0;f=c[e],d>e;e++)f in g||(g[f]=1,f.call(a,b,b.constructor));delete a.__initMixins__}},k){e={0:[Function,"initMixins","define","abstract"],1:[g,"fastClass","inheritWith","define","defineStatic"]};for(f in e)for(var q,n=e[f],o=n[0],p=1;q=n[p],p<n.length;p++)j(o,q,{enumerable:!1,value:o[q]})}}();var __hasProp={}.hasOwnProperty,__extends=function(a,b){function c(){this.constructor=a}for(var d in b)__hasProp.call(b,d)&&(a[d]=b[d]);return c.prototype=b.prototype,a.prototype=new c,a.__super__=b.prototype,a};!function(){var a,b,c;!function(d){function e(a,b){return u.call(a,b)}function f(a,b){var c,d,e,f,g,h,i,j,k,l,m,n=b&&b.split("/"),o=s.map,p=o&&o["*"]||{};if(a&&"."===a.charAt(0))if(b){for(n=n.slice(0,n.length-1),a=a.split("/"),g=a.length-1,s.nodeIdCompat&&w.test(a[g])&&(a[g]=a[g].replace(w,"")),a=n.concat(a),k=0;k<a.length;k+=1)if(m=a[k],"."===m)a.splice(k,1),k-=1;else if(".."===m){if(1===k&&(".."===a[2]||".."===a[0]))break;k>0&&(a.splice(k-1,2),k-=2)}a=a.join("/")}else 0===a.indexOf("./")&&(a=a.substring(2));if((n||p)&&o){for(c=a.split("/"),k=c.length;k>0;k-=1){if(d=c.slice(0,k).join("/"),n)for(l=n.length;l>0;l-=1)if(e=o[n.slice(0,l).join("/")],e&&(e=e[d])){f=e,h=k;break}if(f)break;!i&&p&&p[d]&&(i=p[d],j=k)}!f&&i&&(f=i,h=j),f&&(c.splice(0,h,f),a=c.join("/"))}return a}function g(a,b){return function(){return n.apply(d,v.call(arguments,0).concat([a,b]))}}function h(a){return function(b){return f(b,a)}}function i(a){return function(b){q[a]=b}}function j(a){if(e(r,a)){var b=r[a];delete r[a],t[a]=!0,m.apply(d,b)}if(!e(q,a)&&!e(t,a))throw new Error("No "+a);return q[a]}function k(a){var b,c=a?a.indexOf("!"):-1;return c>-1&&(b=a.substring(0,c),a=a.substring(c+1,a.length)),[b,a]}function l(a){return function(){return s&&s.config&&s.config[a]||{}}}var m,n,o,p,q={},r={},s={},t={},u=Object.prototype.hasOwnProperty,v=[].slice,w=/\.js$/;o=function(a,b){var c,d=k(a),e=d[0];return a=d[1],e&&(e=f(e,b),c=j(e)),e?a=c&&c.normalize?c.normalize(a,h(b)):f(a,b):(a=f(a,b),d=k(a),e=d[0],a=d[1],e&&(c=j(e))),{f:e?e+"!"+a:a,n:a,pr:e,p:c}},p={require:function(a){return g(a)},exports:function(a){var b=q[a];return"undefined"!=typeof b?b:q[a]={}},module:function(a){return{id:a,uri:"",exports:q[a],config:l(a)}}},m=function(a,b,c,f){var h,k,l,m,n,v,s=[],u=typeof c;if(f=f||a,"undefined"===u||"function"===u){for(b=!b.length&&c.length?["require","exports","module"]:b,n=0;n<b.length;n+=1)if(m=o(b[n],f),k=m.f,"require"===k)s[n]=p.require(a);else if("exports"===k)s[n]=p.exports(a),v=!0;else if("module"===k)h=s[n]=p.module(a);else if(e(q,k)||e(r,k)||e(t,k))s[n]=j(k);else{if(!m.p)throw new Error(a+" missing "+k);m.p.load(m.n,g(f,!0),i(k),{}),s[n]=q[k]}l=c?c.apply(q[a],s):void 0,a&&(h&&h.exports!==d&&h.exports!==q[a]?q[a]=h.exports:l===d&&v||(q[a]=l))}else a&&(q[a]=c)},a=b=n=function(a,b,c,e,f){if("string"==typeof a)return p[a]?p[a](b):j(o(a,b).f);if(!a.splice){if(s=a,s.deps&&n(s.deps,s.callback),!b)return;b.splice?(a=b,b=c,c=null):a=d}return b=b||function(){},"function"==typeof c&&(c=e,e=f),e?m(d,a,b,c):setTimeout(function(){m(d,a,b,c)},4),n},n.config=function(a){return n(a)},a._defined=q,c=function(a,b,c){b.splice||(c=b,b=[]),!e(q,a)&&!e(r,a)&&(r[a]=[a,b,c])},c.amd={jQuery:!0}}(),c("almond",function(){}),c("lib/inspect",[],function(){"object"==typeof console&&!console.inspect&&(console.inspect="undefined"!=typeof navigator&&/msie/i.test(navigator.userAgent)&&!/opera/i.test(navigator.userAgent)?console.dir||console.log:console.log)}),c("lib/printWarning",[],function(){function a(a){"undefined"!=typeof console&&console.warn(a)}return a}),c("mout/lang/kindOf",["require","exports","module"],function(a,b,c){function d(a){return null===a?"Null":a===g?"Undefined":e.exec(f.call(a))[1]}var g,e=/^\[object (.*)\]$/,f=Object.prototype.toString;c.exports=d}),c("mout/lang/isKind",["require","exports","module","./kindOf"],function(a,b,c){function d(a,b){return e(a)===b}var e=a("./kindOf");c.exports=d}),c("mout/lang/isFunction",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"Function")}var e=a("./isKind");c.exports=d}),c("lib/hasDefineProperty",["mout/lang/isFunction"],function(a){function b(){if(!a(Object.defineProperty))return!1;try{Object.defineProperty({},"x",{})}catch(b){return!1}return!0}return b()}),c("lib/obfuscateProperty",["./hasDefineProperty"],function(a){function b(b,c,d,e,f){a?Object.defineProperty(b,c,{value:d,configurable:f||!1,writable:e||!1,enumerable:!1}):b[c]=d}return b}),c("mout/lang/isNumber",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"Number")}var e=a("./isKind");c.exports=d}),c("mout/lang/isString",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"String")}var e=a("./isKind");c.exports=d}),c("mout/lang/isBoolean",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"Boolean")}var e=a("./isKind");c.exports=d}),c("lib/isImmutable",["mout/lang/isNumber","mout/lang/isString","mout/lang/isBoolean"],function(a,b,c){function d(d){return null==d||c(d)||a(d)||b(d)}return d}),c("mout/lang/isObject",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"Object")}var e=a("./isKind");c.exports=d}),c("mout/lang/isArray",["require","exports","module","./isKind"],function(a,b,c){var d=a("./isKind"),e=Array.isArray||function(a){return d(a,"Array")};c.exports=e}),c("mout/lang/isDate",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"Date")}var e=a("./isKind");c.exports=d}),c("mout/lang/isRegExp",["require","exports","module","./isKind"],function(a,b,c){function d(a){return e(a,"RegExp")}var e=a("./isKind");c.exports=d}),c("mout/object/hasOwn",["require","exports","module"],function(a,b,c){function d(a,b){return Object.prototype.hasOwnProperty.call(a,b)}c.exports=d}),c("mout/object/forIn",["require","exports","module","./hasOwn"],function(a,b,c){function d(){i=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],h=!0;for(var a in{toString:null})h=!1}function e(a,b,c){var e,j=0;null==h&&d();for(e in a)if(f(b,a,e,c)===!1)break;if(h)for(var k=a.constructor,l=!!k&&a===k.prototype;(e=i[j++])&&("constructor"===e&&(l||!g(a,e))||a[e]===Object.prototype[e]||f(b,a,e,c)!==!1););}function f(a,b,c,d){return a.call(d,b[c],c,b)}var h,i,g=a("./hasOwn");c.exports=e}),c("mout/object/forOwn",["require","exports","module","./hasOwn","./forIn"],function(a,b,c){function d(a,b,c){f(a,function(d,f){return e(a,f)?b.call(c,a[f],f,a):void 0})}var e=a("./hasOwn"),f=a("./forIn");c.exports=d}),c("mout/object/mixIn",["require","exports","module","./forOwn"],function(a,b,c){function d(a){for(var g,c=0,d=arguments.length;++c<d;)g=arguments[c],null!=g&&f(g,e,a);return a}function e(a,b){this[b]=a}var f=a("./forOwn");c.exports=d}),c("mout/lang/createObject",["require","exports","module","../object/mixIn"],function(a,b,c){function d(a,b){function c(){}return c.prototype=a,e(new c,b)}var e=a("../object/mixIn");c.exports=d}),c("mout/array/indexOf",["require","exports","module"],function(a,b,c){function d(a,b,c){if(c=c||0,null==a)return-1;for(var d=a.length,e=0>c?d+c:c;d>e;){if(a[e]===b)return e;e++}return-1}c.exports=d}),c("mout/array/combine",["require","exports","module","./indexOf"],function(a,b,c){function d(a,b){if(null==b)return a;for(var c=-1,d=b.length;++c<d;)-1===e(a,b[c])&&a.push(b[c]);return a}var e=a("./indexOf");c.exports=d}),c("mout/array/contains",["require","exports","module","./indexOf"],function(a,b,c){function d(a,b){return-1!==e(a,b)}var e=a("./indexOf");c.exports=d}),c("mout/lang/isPlainObject",["require","exports","module"],function(a,b,c){function d(a){return!!a&&"object"==typeof a&&a.constructor===Object}c.exports=d}),c("mout/lang/clone",["require","exports","module","./kindOf","./isPlainObject","../object/mixIn"],function(a,b,c){function d(a){switch(i(a)){case"Object":return e(a);case"Array":return h(a);case"RegExp":return f(a);case"Date":return g(a);default:return a}}function e(a){return j(a)?k({},a):a
+}function f(a){var b="";return b+=a.multiline?"m":"",b+=a.global?"g":"",b+=a.ignorecase?"i":"",new RegExp(a.source,b)}function g(a){return new Date(+a)}function h(a){return a.slice()}var i=a("./kindOf"),j=a("./isPlainObject"),k=a("../object/mixIn");c.exports=d}),c("mout/lang/deepClone",["require","exports","module","./clone","../object/forOwn","./kindOf","./isPlainObject"],function(a,b,c){function d(a,b){switch(i(a)){case"Object":return e(a,b);case"Array":return f(a,b);default:return g(a)}}function e(a,b){if(j(a)){var c={};return h(a,function(a,c){this[c]=d(a,b)},c),c}return b?b(a):a}function f(a,b){for(var c=[],e=-1,f=a.length;++e<f;)c[e]=d(a[e],b);return c}var g=a("./clone"),h=a("../object/forOwn"),i=a("./kindOf"),j=a("./isPlainObject");c.exports=d}),c("lib/mixIn",[],function(){function a(a){var c,e,f,d=arguments.length;for(c=1;d>c;c+=1){f=arguments[c];for(e in arguments[c])a[e]=f[e]}return a}return a}),c("mout/array/append",["require","exports","module"],function(a,b,c){function d(a,b){if(null==b)return a;for(var c=a.length,d=-1,e=b.length;++d<e;)a[c+d]=b[d];return a}c.exports=d}),c("mout/array/slice",["require","exports","module"],function(a,b,c){function d(a,b,c){var d=a.length;b=null==b?0:0>b?Math.max(d+b,0):Math.min(b,d),c=null==c?d:0>c?Math.max(d+c,0):Math.min(c,d);for(var e=[];c>b;)e.push(a[b++]);return e}c.exports=d}),c("mout/function/bind",["require","exports","module","../array/slice"],function(a,b,c){function d(a,b){var d=e(arguments,2);return function(){return a.apply(b,d.concat(e(arguments)))}}var e=a("../array/slice");c.exports=d}),c("mout/lang/toArray",["require","exports","module","./kindOf"],function(a,b,c){function d(a){var d,b=[],c=e(a);if(null!=a)if(null==a.length||"String"===c||"Function"===c||"RegExp"===c||a===f)b[b.length]=a;else for(d=a.length;d--;)b[d]=a[d];return b}var e=a("./kindOf"),f=this;c.exports=d}),c("mout/function/identity",["require","exports","module"],function(a,b,c){function d(a){return a}c.exports=d}),c("mout/function/prop",["require","exports","module"],function(a,b,c){function d(a){return function(b){return b[a]}}c.exports=d}),c("mout/object/deepMatches",["require","exports","module","./forOwn","../lang/isArray"],function(a,b,c){function d(a,b){for(var c=-1,d=a.length;++c<d;)if(g(a[c],b))return!0;return!1}function e(a,b){for(var c=-1,e=b.length;++c<e;)if(!d(a,b[c]))return!1;return!0}function f(a,b){var c=!0;return h(b,function(b,d){return g(a[d],b)?void 0:c=!1}),c}function g(a,b){return a&&"object"==typeof a?i(a)&&i(b)?e(a,b):f(a,b):a===b}var h=a("./forOwn"),i=a("../lang/isArray");c.exports=g}),c("mout/function/makeIterator_",["require","exports","module","./identity","./prop","../object/deepMatches"],function(a,b,c){function d(a,b){if(null==a)return e;switch(typeof a){case"function":return"undefined"!=typeof b?function(c,d,e){return a.call(b,c,d,e)}:a;case"object":return function(b){return g(b,a)};case"string":case"number":return f(a)}}var e=a("./identity"),f=a("./prop"),g=a("../object/deepMatches");c.exports=d}),c("mout/array/filter",["require","exports","module","../function/makeIterator_"],function(a,b,c){function d(a,b,c){b=e(b,c);var d=[];if(null==a)return d;for(var h,f=-1,g=a.length;++f<g;)h=a[f],b(h,f,a)&&d.push(h);return d}var e=a("../function/makeIterator_");c.exports=d}),c("mout/array/unique",["require","exports","module","./filter"],function(a,b,c){function d(a,b){return b=b||e,f(a,function(a,c,d){for(var e=d.length;++c<e;)if(b(a,d[c]))return!1;return!0})}function e(a,b){return a===b}var f=a("./filter");c.exports=d}),c("mout/array/some",["require","exports","module","../function/makeIterator_"],function(a,b,c){function d(a,b,c){b=e(b,c);var d=!1;if(null==a)return d;for(var f=-1,g=a.length;++f<g;)if(b(a[f],f,a)){d=!0;break}return d}var e=a("../function/makeIterator_");c.exports=d}),c("mout/array/difference",["require","exports","module","./unique","./filter","./some","./contains","./slice"],function(a,b,c){function d(a){var b=i(arguments,1),c=f(e(a),function(a){return!g(b,function(b){return h(b,a)})});return c}var e=a("./unique"),f=a("./filter"),g=a("./some"),h=a("./contains"),i=a("./slice");c.exports=d}),c("mout/array/insert",["require","exports","module","./difference","./slice"],function(a,b,c){function d(a){var c=e(f(arguments,1),a);return c.length&&Array.prototype.push.apply(a,c),a.length}var e=a("./difference"),f=a("./slice");c.exports=d}),c("Class",["./lib/inspect","./lib/printWarning","./lib/obfuscateProperty","./lib/isImmutable","mout/lang/isString","mout/lang/isFunction","mout/lang/isObject","mout/lang/isArray","mout/lang/isDate","mout/lang/isRegExp","mout/lang/createObject","mout/object/hasOwn","mout/array/combine","mout/array/contains","mout/lang/deepClone","./lib/mixIn","mout/array/append","mout/function/bind","mout/lang/toArray","mout/array/insert"],function(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t){function u(a,b){var c=function(){};c.prototype=b.prototype,a.prototype=new c,a.prototype.constructor=a}function v(a,b,c,d){if(c[L].efficient)return b;var e,f=c.$parent,g=f&&(d?f:f.prototype);return b=b[O]||b,e=function(){var h,d=this.$super,e=this.$self,f=g&&g[a];return this.$super=f,this.$self=c,h=b.apply(this,arguments),this.$super=d,this.$self=e,h},e[O]=b,e}function w(a,b){var c,e;for(c in a)/^(_){0,2}initialize$/.test(c)||(e=a[c],l(b.prototype,c)||(!f(e)||e[L]||e[M]?(b.prototype[c]=e,d(e)||t(b[L].properties,c)):(b.prototype[c]=v(c,e,b),e[N]&&t(b[L].binds,c))))}function x(a,b){if(l(a,"$borrows")){var c,d,e,h,i=s(a.$borrows),j=i.length;for(j-=1;j>=0;j-=1)if(c=i[j],g(c))w(c,b);else if(!f(c)||c[L]){for(c=c.prototype,w(c,b),d=c.$static[L].staticMethods.length-1;d>=0;d-=1)e=c.$static[L].staticMethods[d],t(b[L].staticMethods,e),b[e]=c.$static[e];for(e in c.$static[L].staticProperties)h=c.$static[L].staticProperties[e],b[L].staticProperties[e]=h,b[e]=h;m(b[L].binds,c.$static[L].binds)}else w(c.prototype,b);delete a.$borrows}}function y(a,b){a=s(a);var c,e,d=a.length;for(d-=1;d>=0;d-=1)if(c=a[d],!n(b[L].interfaces,c)){for(e=c[M].constants.length-1;e>=0;e-=1)b[c[M].constants[e]]=c[c[M].constants[e]],b[L].staticProperties[c[M].constants[e]]=c[c[M].constants[e]];b[L].interfaces.push(c)}}function z(a,b){var e,g,h={};if(l(a,"$statics")){for(e in a.$statics)g=a.$statics[e],!f(g)||g[L]||g[M]?(b[L].staticProperties[e]=g,b[e]=g):(t(b[L].staticMethods,e),b[e]=v(e,g,b,!0));delete a.$statics}l(a,"$implements")&&(h.$implements=a.$implements,delete a.$implements),l(a,"$abstracts")&&(h.$abstracts=a.$abstracts,delete a.$abstracts);for(e in a)g=a[e],!f(g)||g[L]||g[M]?(b.prototype[e]=g,d(g)||t(b[L].properties,e)):(b.prototype[e]=v(e,g,b),g[N]&&(t(b[L].binds,e),delete g[N]));p(a,h)}function A(a,b){var c,d,e={};if(delete a.$locked,l(a,"$constants")&&(e.$constants=a.$constants,delete a.$constants),l(a,"$finals")&&(e.$finals=a.$finals,delete a.$finals),z(a,b),e.$constants)for(c in e.$constants)d=e.$constants[c],b[L].staticProperties[c]=d,b[c]=d;e.$finals&&z(e.$finals,b,!0)}function B(a,b){var c,d;for(c=a.length-1;c>=0;c-=1)d=b[a[c]],b[a[c]]=r(d,b)}function C(a){var d=a||function(){var a,b;for(b=this.$static[L],a=b.properties.length-1;a>=0;a-=1)this[b.properties[a]]=o(this[b.properties[a]]);b.efficient||(this.$super=this.$self=null),b.binds.length&&B(b.binds,this,this),this.initialize.apply(this,arguments)};return d[L]||c(d,L,{staticMethods:[],staticProperties:{},properties:[],interfaces:[],binds:[]}),d}function D(a){return a=a||this}function E(a){var c,b=s(arguments);return this&&!a[O]&&this.$static&&this.$static[L]&&(a=v(null,a,this.$self||this.$static)),b.splice(1,0,this),c=r.apply(a,b)}function F(a){var c,b=s(arguments);return this&&!a[O]&&this.$static&&this.$static[L]&&(a=v(null,a,this.$self||this.$static,!0)),b.splice(1,0,this),c=r.apply(a,b)}function G(a,b){var d,f,g,e=b[L].binds;for(d=e.length-1;d>=0;d-=1)"__"!==e[d].substr(0,2)&&a[L].binds.push(e[d]);for(q(a[L].properties,b[L].properties),q(a[L].staticMethods,b[L].staticMethods),d=b[L].staticMethods.length-1;d>=0;d-=1)"__"!==b[L].staticMethods[d].substr(0,2)&&(a[b[L].staticMethods[d]]=b[b[L].staticMethods[d]]);for(f in b[L].staticProperties)g=b[L].staticProperties[f],"__"!==f.substr(0,2)&&(a[L].staticProperties[f]=g,a[f]=g);c(a,"$parent",b),a[L].interfaces=[].concat(b[L].interfaces)}function H(a){var d,e,f,b=a[L];if(b.efficient&&(d=a.$canOptimizeConst,delete a.$canOptimizeConst,d&&!b.properties.length&&!b.binds.length)){if(l(a.prototype,"initialize"))e=a.prototype.initialize;else switch(f=a.prototype.initialize,f.length){case 0:e=function(){f.call(this)};break;case 1:e=function(a){f.call(this,a)};break;case 2:e=function(a,b){f.call(this,a,b)};break;case 3:e=function(a,b,c){f.call(this,a,b,c)};break;case 4:e=function(a,b,c,d){f.call(this,a,b,c,d)};break;default:e=function(){f.apply(this,arguments)}}return a.$parent&&(u(e,a),e.$parent=a.$parent),p(e.prototype,a.prototype),p(e,a),c(e,L,a[L]),e}return a}function I(a,b){return K.declare(this,a,b)}var J,K={},L="$class",M="$interface",N="$bound_dejavu",O="$wrapped_dejavu";if(J=function(a,b,d){d=d||{};var e,f,g=!!b;return l(a,"$extends")?(f=a.$extends,delete a.$extends,f[L]||(f=J(f.prototype,f,{isVanilla:!0})),a.initialize=d.isVanilla?e:a.initialize||a._initialize||a.__initialize,a.initialize||delete a.initialize,e=C(b),u(e,f),G(e,f)):(e=C(b),a.initialize=d.isVanilla?e:a.initialize||a._initialize||a.__initialize||function(){}),e[L].efficient=g,d.isVanilla||(delete a._initialize,delete a.__initialize),x(a,e),A(a,e),e=H(e),c(e.prototype,"$static",e),c(e,"$static",e),c(e,"$self",null,!0),c(e,"$super",null,!0),c(e,"$member",D),c(e,"$bind",F),e.$parent||(c(e.prototype,"$bind",E),c(e.prototype,"$member",D)),l(a,"$implements")&&(y(a.$implements,e),delete e.prototype.$implements),l(a,"$abstracts")&&delete a.$abstracts,e.extend=I,e},K.declare=function(a,b,c){var d,h,i,e=f(this)?this:J;if(a&&b&&b!==!0?((h=f(b))||c?(i=C(),i.$canOptimizeConst=!!c,d=h?b(a.prototype,a,i):b):d=b,d.$extends=a):(h=f(a))||b?(i=C(),i.$canOptimizeConst=!!b,d=h?a(i):a):d=a,!g(d))throw new Error("Expected class definition to be an object with the class members.");return e(d,i)},c(K,"$create",J),!Function.prototype.$bound||!Function.prototype.$bound.dejavu)try{c(Function.prototype,"$bound",function(){return this[N]=!0,this}),Function.prototype.$bound.dejavu=!0}catch(P){b("Could not set Function.prototype.$bound.")}if(!Function.prototype.$bind||!Function.prototype.$bind.dejavu)try{c(Function.prototype,"$bind",function(a){var b=s(arguments);return b.splice(0,1,this),f(a)?F.apply(a,b):E.apply(a,b)}),Function.prototype.$bind.dejavu=!0}catch(P){b("Could not set Function.prototype.$bind.")}if(!Function.prototype.$member||!Function.prototype.$member.dejavu)try{c(Function.prototype,"$member",function(){return D(this)}),Function.prototype.$member.dejavu=!0}catch(P){b("Could not set Function.prototype.$member.")}return K}),c("AbstractClass",["mout/object/hasOwn","mout/array/insert","./Class"],function(a,b,c){function d(d,h){var i,j,k,l;if(a(d,"$abstracts")&&(j=d.$abstracts,delete d.$abstracts),i=c.$create(d,h),i[e]=!0,j)for(k in j)l=j[k],l[g]&&b(i[f].binds,k);return i}var e="$abstract",f="$class",g="$bound_dejavu",h={};return h.declare=function(a,b,e){return c.declare.call(d,a,b,e)},h}),c("Interface",["mout/lang/isFunction","mout/object/hasOwn","mout/lang/toArray"],function(a,b,c){function d(a){return a.$extends=this,g.declare(a)}function e(a){delete a.$name;var e,g,h,i,j=function(){};if(j[f]={parents:[],constants:[]},b(a,"$extends")){for(e=c(a.$extends),g=e.length,g-=1;g>=0;g-=1){for(i=e[g],h=i[f].constants.length-1;h>=0;h-=1)j[i[f].constants[h]]=i[i[f].constants[h]];j[f].parents.push(i)}delete a.$extends}if(b(a,"$constants"))for(g in a.$constants)j[g]=a.$constants[g],j[f].constants.push(g);return j.extend=d,j}var f="$interface",g={};return g.declare=e,g}),c("FinalClass",["./Class"],function(a){function b(b,c){var d=a.$create(b,c);return d}var c={};return c.declare=function(c,d,e){return a.declare.call(b,c,d,e)},c}),c("instanceOf",["mout/lang/isFunction"],function(a){function b(a,c){var d,e=a[f].parents;for(d=e.length-1;d>=0;d-=1){if(e[d]===c)return!0;if(b(a,e[d]))return!0}return!1}function c(a,c){var d,f=a.$static[e].interfaces;for(d=f.length-1;d>=0;d-=1)if(f[d]===c||b(f[d],c))return!0;return!1}function d(b,d){return a(d)?b instanceof d?!0:b&&b.$static&&b.$static[e]&&d&&d[f]?c(b,d):!1:!1}var e="$class",f="$interface";return d}),c("options",[],function(){return{}}),c("dejavu",["./Class","./AbstractClass","./Interface","./FinalClass","./instanceOf","./options"],function(a,b,c,d,e,f){var g={};g.Class=a,g.AbstractClass=b,g.Interface=c,g.FinalClass=d,g.instanceOf=e,g.options=f,g.mode="loose",window.dejavu=g}),b("dejavu",null,null,!0)}();
+var A, B, a, d,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+
+var inherit = (function() {
+	'use strict';
+
+	var o = 'object',
+		p = 'prototype',
+		c = 'constructor',
+		args,
+		parent,
+		body,
+		new_proto;
+
+	return function() {
+
+		function newfunction(){}
+
+		args = arguments,
+		parent = ( args.length > 1 ) ? args[0] : newfunction,
+		body = args[ args.length-1 ],
+		body[p] = Object.create( parent[p] ),
+		new_proto = new body( body[p] );
+
+		if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
+			new_proto[c] = newfunction;
+
+		new_proto[c][p] = new_proto;
+		return new_proto[c];
+
+	};
+
+})();
+
+
+testring = [
+'nome1_nome2_nome2B_nome3_',
+'nome1_Nam2changed_nome2B_nome3_',
+'local1--- local2 local1,local1------ local2 local1,local1------ local3 local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed LOCAL2FROMCHILD_,LOCAL2FROMCHILD_ local1,local1---------',
+'local2 local1,local1------',
+'France Paris Street3,',
+'France Paris Street3,France City2 Street2',
+'France Paris Street3,France City2 Street2,Country1 City1 Street1'
+]
+
+
+
+
+var InheritPerson = inherit(function () {
+    this.local = "local1";
+    this.getlocal = function(){
+        return this.local + '---';
+    };
+    this.constructor = function(nome) {
+        this.nome = nome;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+var InheritFrenchGuy = inherit(InheritPerson, function($super) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+    };
+    this.constructor = function (nome) {
+        $super.constructor.call(this, nome);
+    };
+    this.setAddress = function(city, street) {
+        $super.setAddress.call(this, "France", city, street);
+    };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+    };
+    this.change = function(){
+        $super.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (nome) {
+        $super.constructor.call(this, nome);
+    };
+    this.setAddress = function(street) {
+        $super.setAddress.call(this, "Paris", street);
+    };
+});
+
+
+
+
+var AugmentPerson1 = Object.augment1(function() {
+    this.local = "local1";
+    this.getlocal = function(){
+        return this.local + '---';
+    };
+    this.constructor = function(nome) {
+        this.nome = nome;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+var AugmentFrenchGuy1 = AugmentPerson1.augment1(function(base) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.constructor = function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(city, street) {
+        base.setAddress.call(this, "France", city, street);
+    };
+});
+    
+var AugmentParisLover1 = AugmentFrenchGuy1.augment1(function(base) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.change = function(){
+        base.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+    };
+});
+
+
+var AugmentPerson = augment.defclass({
+        local:"local1",
+        getlocal: function(){
+            return this.local + '---';
+        },
+        constructor: function(nome) {
+            this.nome = nome;
+        },
+        setAddress: function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        }
+    });
+var AugmentFrenchGuy = augment(AugmentPerson, function(base) {
+    this.local = "local2";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.constructor = function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(city, street) {
+        base.setAddress.call(this, "France", city, street);
+    };
+});
+    
+var AugmentParisLover = augment(AugmentFrenchGuy, function(base) {
+    this.local = "local3";
+    this.getlocal = function(){
+        return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+    };
+    this.change = function(){
+        base.local = "LOCAL2FROMCHILD_"
+    };
+    this.constructor= function (nome) {
+        base.constructor.call(this, nome);
+    };
+    this.setAddress = function(street) {
+        base.setAddress.call(this, "Paris", street);
+    };
+});
+
+    
+    
+var FCPerson = Function.inheritWith(function() {
+    return {
+        local:"local1",
+        getlocal: function(){
+            return this.local + '---';
+        },
+        constructor: function(nome) {
+            this.nome = nome;
+        },
+        setAddress: function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        }
+    }
+});
+var FCFrenchGuy = FCPerson.inheritWith(function(base, baseCtor){
+    return {
+        local:"local2",
+        getlocal: function(){
+            return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+        },
+        constructor: function(nome) {
+            baseCtor.call(this, nome);
+        },
+        setAddress: function(city, street) {
+            base.setAddress.call(this, 'France', city, street);
+        }
+    }
+});
+
+var FCParisLover = FCFrenchGuy.inheritWith(function(base, baseCtor){
+    return {
+        local:"local3",
+        getlocal: function(){
+            return this.local + ' ' + base.local + ',' + base.getlocal() + '---';
+        },
+        change: function(){
+            base.local = "LOCAL2FROMCHILD_"
+        },
+        constructor: function(nome) {
+            baseCtor.call(this, nome);
+        },
+        setAddress: function(street) {
+            base.setAddress.call(this, 'Paris', street);
+        }
+    }
+});
+    
+
+var JSFacePerson = jsface.Class({
+    local:"local1",
+    getlocal: function(){
+        return this.local + '---';
+    },
+    constructor: function(nome) {
+        this.nome = nome;
+    },
+    setAddress: function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    }
+  });
+
+  var JSFaceFrenchGuy = jsface.Class(JSFacePerson, {
+    local:"local2",
+    getlocal: function(){
+        return this.local + ' ' + JSFaceFrenchGuy.$superp.local + ',' + JSFaceFrenchGuy.$superp.getlocal() + '---';
+    },
+    constructor: function(nome) {
+        JSFaceFrenchGuy.$super.call(this, nome);
+    },
+    setAddress: function(city, street) {
+        JSFaceFrenchGuy.$superp.setAddress.call(this, 'France', city, street);
+    }
+  });
+
+  var JSFaceParisLover = jsface.Class(JSFaceFrenchGuy, {
+    local:"local3",
+    getlocal: function(){
+        return this.local + ' ' + JSFaceParisLover.$superp.local + ',' + JSFaceParisLover.$superp.getlocal() + '---';
+    },
+    change: function(){
+        JSFaceParisLover.$superp.local = "LOCAL2FROMCHILD_"
+    },
+    constructor: function(nome) {
+        JSFaceParisLover.$super.call(this, nome);
+    },
+    setAddress: function(street) {
+        JSFaceParisLover.$superp.setAddress.call(this, 'Paris', street);
+    }
+  });
+ 
+
+
+
+
+ var dejavuClassPerson2 = dejavu.Class.declare({
+    local:"local1",
+    getlocal: function(){
+        return this.local + '---';
+    },
+    initialize: function(name){
+      this.name = name;
+    },
+    setAddress: function(country, city, street) {
+      this.country = country;
+      this.city = city;
+      this.street = street;
+    }
+  }, true);
+
+  var dejavuClassFrenchGuy2 = dejavu.Class.declare({
+    $extends: dejavuClassPerson2,
+    local:"local2",
+    getlocal: function(){
+        return this.local + ' ' + dejavuClassPerson2.prototype.local + ',' + dejavuClassPerson2.prototype.getlocal() + '---';
+    },
+    initialize: function (name) {
+      dejavuClassPerson2.call(this, name);
+    },
+    setAddress: function(city, street) {
+      dejavuClassPerson2.prototype.setAddress.call(this, 'France', city, street);
+    }
+  }, true);
+
+  var dejavuClassParisLover2 = dejavu.Class.declare({
+    $extends: dejavuClassFrenchGuy2,
+    local:"local3",
+    getlocal: function(){
+        return this.local + ' ' + dejavuClassFrenchGuy2.prototype.local + ',' + dejavuClassFrenchGuy2.prototype.getlocal() + '---';
+    },
+    change: function(){
+        dejavuClassFrenchGuy2.prototype.local = "LOCAL2FROMCHILD_"
+    },
+    initialize: function (name) {
+      dejavuClassFrenchGuy2.call(this, name);
+    },
+    setAddress: function(street) {
+      dejavuClassFrenchGuy2.prototype.setAddress.call(this, 'Paris', street);
+      return this;
+    }
+  }, true);
+
+
+var JRPerson = JRClass.extend({
+        local:"local1",
+    getlocal: function(){
+        return this.local + '---';
+    },
+    init: function(name) {
+      this.name = name;
+    },
+    setAddress: function(country, city, street) {
+      this.country = country;
+      this.city = city;
+      this.street = street;
+    }
+  });
+
+  var JRFrenchGuy = JRPerson.extend({
+    local:"local2",
+    getlocal: function(){
+        return this.local + ' ' + this._super.local + ',' + this._super.getlocal + '---';
+    },
+    init: function(name) {
+      this._super(name);
+    },
+    setAddress: function(city, street) {
+      this._super('France', city, street);
+    }
+  });
+
+  var JRParisLover = JRFrenchGuy.extend({
+        local:"local3",
+    getlocal: function(){
+        return this.local + ' ' + this._super.local + ',' + this._super.getlocal + '---';
+    },
+    change: function(){
+        dejavuClassFrenchGuy2.prototype.local = "LOCAL2FROMCHILD_"
+    },
+    init: function(name) {
+      this._super(name);
+    },
+    setAddress: function(street) {
+      this._super('Paris', street);
+      return this;
+    }
+  });
+
+
+
+
+
+
+
+CoffeePerson = (function() {
+
+ function CoffeePerson(name) {
+    this.name = name;
+  }
+
+  CoffeePerson.prototype.local = "local1";
+
+  CoffeePerson.prototype.getlocal = function() {
+    return this.local + '---';
+  };
+
+  CoffeePerson.prototype.setAddress = function(country, city, street) {
+    this.country = country;
+    this.city = city;
+    this.street = street;
+  };
+
+  return CoffeePerson;
+
+})();
+
+
+
+var CoffeeFrenchGuy = (function(_super) {
+
+  __extends(CoffeeFrenchGuy, _super);
+
+  function CoffeeFrenchGuy(name) {
+    CoffeeFrenchGuy.__super__.constructor.call(this, name);
+  }
+
+  CoffeeFrenchGuy.prototype.local = "local2";
+  CoffeeFrenchGuy.prototype.getlocal = function(){
+      return this.local + ' ' + CoffeeFrenchGuy.__super__.local + ',' + CoffeeFrenchGuy.__super__.getlocal() + '---';
+
+  };
+
+  CoffeeFrenchGuy.prototype.setAddress = function(city, street) {
+    return CoffeeFrenchGuy.__super__.setAddress.call(this, "France", city, street);
+  };
+
+  return CoffeeFrenchGuy;
+
+})(CoffeePerson);
+
+
+
+var CoffeeParisLover = (function(_super) {
+
+  __extends(CoffeeParisLover, _super);
+
+  function CoffeeParisLover(name) {
+    CoffeeParisLover.__super__.constructor.call(this, name);
+  }
+
+
+  CoffeeParisLover.prototype.local = "local3";
+  CoffeeParisLover.prototype.getlocal = function(){
+      return this.local + ' ' + CoffeeParisLover.__super__.local + ',' + CoffeeParisLover.__super__.getlocal() + '---';
+  };
+  CoffeeParisLover.prototype.change = function(){
+      CoffeeParisLover.prototype.local = "LOCAL2FROMCHILD_"
+  };
+
+  CoffeeParisLover.prototype.setAddress = function(street) {
+    return CoffeeParisLover.__super__.setAddress.call(this, "Paris", street);
+  };
+
+  return CoffeeParisLover;
+
+})(CoffeeFrenchGuy);
+
+
+
+
+
+
+
+
+
+
+console.log("==============")
+console.log("inherit")
+console.log("==============")
+var A1 = new InheritPerson("nome1_");
+var A2 = new InheritFrenchGuy("nome2_");
+var A2b = new InheritFrenchGuy("nome2B_");
+var A3 = new InheritParisLover("nome3_");
+
+console.log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console.log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console.log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console.log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console.log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new InheritFrenchGuy("nome2B_");
+console.log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console.log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console.log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console.log(5.1, (A1 instanceof InheritPerson)+' '+ (A1 instanceof InheritFrenchGuy) +' '+ (A1 instanceof InheritParisLover))
+console.log(5.2, (A2 instanceof InheritPerson)+' '+ (A2 instanceof InheritFrenchGuy) +' '+ (A2 instanceof InheritParisLover))
+console.log(5.3, (A3 instanceof InheritPerson)+' '+ (A3 instanceof InheritFrenchGuy) +' '+ (A3 instanceof InheritParisLover))
+
+
+
+
+
+console.log("==============")
+console.log("augment 1.0")
+console.log("==============")
+
+var B1 = new AugmentPerson1("nome1_");
+var B2 = new AugmentFrenchGuy1("nome2_");
+var B2b = new AugmentFrenchGuy1("nome2B_");
+var B3 = new AugmentParisLover1("nome3_");
+
+console.log(1.1, B1.nome + B2.nome + B2b.nome + B3.nome == testring[0])
+B2.nome = "Nam2changed_";
+console.log(1.2, B1.nome + B2.nome + B2b.nome + B3.nome == testring[1])
+
+console.log(2.1, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ B3.getlocal() == testring[2])
+B1.local = "local1_changed";
+B2.local = "local2_changed";
+B2b.local = "local2b_changed";
+B3.local = "local3_changed";
+console.log(2.2, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ B3.getlocal() == testring[3])
+
+B3.change();
+console.log(3.1, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ B3.getlocal() == testring[4])
+var B2c = new AugmentFrenchGuy1("nome2B_");
+console.log(3.2, B2c.getlocal() == testring[5])
+
+B3.setAddress("Street3");
+console.log(4.1, B3.country + ' ' + B3.city + ' ' + B3.street + ',' == testring[6])
+B2.setAddress("City2", "Street2");
+console.log(4.2, B3.country + ' ' + B3.city + ' ' + B3.street + ',' + B2.country + ' ' + B2.city + ' ' + B2.street == testring[7])
+B1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, B3.country + ' ' + B3.city + ' ' + B3.street + ',' + B2.country + ' ' + B2.city + ' ' + B2.street + ',' + B1.country + ' ' + B1.city + ' ' + B1.street == testring[8])
+
+console.log(5.1, (B1 instanceof AugmentPerson1)+' '+ (B1 instanceof AugmentFrenchGuy1) +' '+ (B1 instanceof AugmentParisLover1))
+console.log(5.2, (B2 instanceof AugmentPerson1)+' '+ (B2 instanceof AugmentFrenchGuy1) +' '+ (B2 instanceof AugmentParisLover1))
+console.log(5.3, (B3 instanceof AugmentPerson1)+' '+ (B3 instanceof AugmentFrenchGuy1) +' '+ (B3 instanceof AugmentParisLover1))
+
+
+
+console.log("==============")
+console.log("FastClass")
+console.log("==============")
+
+var C1 = new FCPerson("nome1_");
+var C2 = new FCFrenchGuy("nome2_");
+var C2b = new FCFrenchGuy("nome2B_");
+var C3 = new FCParisLover("nome3_");
+
+console.log(1.1, C1.nome + C2.nome + C2b.nome + C3.nome == testring[0])
+C2.nome = "Nam2changed_";
+console.log(1.2, C1.nome + C2.nome + C2b.nome + C3.nome == testring[1])
+
+console.log(2.1, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[2])
+C1.local = "local1_changed";
+C2.local = "local2_changed";
+C2b.local = "local2b_changed";
+C3.local = "local3_changed";
+console.log(2.2, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[3])
+
+C3.change();
+console.log(3.1, C1.getlocal() +' '+ C2.getlocal() +' '+ C2b.getlocal() +' '+ C3.getlocal() == testring[4])
+var C2c = new FCFrenchGuy("nome2B_");
+console.log(3.2, C2c.getlocal() == testring[5])
+
+C3.setAddress("Street3");
+console.log(4.1, C3.country + ' ' + C3.city + ' ' + C3.street + ',' == testring[6])
+C2.setAddress("City2", "Street2");
+console.log(4.2, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + C2.country + ' ' + C2.city + ' ' + C2.street == testring[7])
+C1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, C3.country + ' ' + C3.city + ' ' + C3.street + ',' + C2.country + ' ' + C2.city + ' ' + C2.street + ',' + C1.country + ' ' + C1.city + ' ' + C1.street == testring[8])
+
+console.log(5.1, (C1 instanceof FCPerson)+' '+ (C1 instanceof FCFrenchGuy) +' '+ (C1 instanceof FCParisLover))
+console.log(5.2, (C2 instanceof FCPerson)+' '+ (C2 instanceof FCFrenchGuy) +' '+ (C2 instanceof FCParisLover))
+console.log(5.3, (C3 instanceof FCPerson)+' '+ (C3 instanceof FCFrenchGuy) +' '+ (C3 instanceof FCParisLover))
+
+
+
+
+
+
+console.log("==============")
+console.log("jsFace")
+console.log("==============")
+
+var D1 = new JSFacePerson("nome1_");
+var D2 = new JSFaceFrenchGuy("nome2_");
+var D2b = new JSFaceFrenchGuy("nome2B_");
+var D3 = new JSFaceParisLover("nome3_");
+
+console.log(1.1, D1.nome + D2.nome + D2b.nome + D3.nome == testring[0])
+D2.nome = "Nam2changed_";
+console.log(1.2, D1.nome + D2.nome + D2b.nome + D3.nome == testring[1])
+
+console.log(2.1, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[2])
+D1.local = "local1_changed";
+D2.local = "local2_changed";
+D2b.local = "local2b_changed";
+D3.local = "local3_changed";
+console.log(2.2, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[3])
+
+D3.change();
+console.log(3.1, D1.getlocal() +' '+ D2.getlocal() +' '+ D2b.getlocal() +' '+ D3.getlocal() == testring[4])
+var D2c = new JSFaceFrenchGuy("nome2B_");
+console.log(3.2, D2c.getlocal() == testring[5])
+
+D3.setAddress("Street3");
+console.log(4.1, D3.country + ' ' + D3.city + ' ' + D3.street + ',' == testring[6])
+D2.setAddress("City2", "Street2");
+console.log(4.2, D3.country + ' ' + D3.city + ' ' + D3.street + ',' + D2.country + ' ' + D2.city + ' ' + D2.street == testring[7])
+D1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, D3.country + ' ' + D3.city + ' ' + D3.street + ',' + D2.country + ' ' + D2.city + ' ' + D2.street + ',' + D1.country + ' ' + D1.city + ' ' + D1.street == testring[8])
+
+console.log(5.1, (D1 instanceof JSFacePerson)+' '+ (D1 instanceof JSFaceFrenchGuy) +' '+ (D1 instanceof JSFaceParisLover))
+console.log(5.2, (D2 instanceof JSFacePerson)+' '+ (D2 instanceof JSFaceFrenchGuy) +' '+ (D2 instanceof JSFaceParisLover))
+console.log(5.3, (D3 instanceof JSFacePerson)+' '+ (D3 instanceof JSFaceFrenchGuy) +' '+ (D3 instanceof JSFaceParisLover))
+
+
+
+console.log("==============")
+console.log("augment 2.0")
+console.log("==============")
+
+var E1 = new AugmentPerson("nome1_");
+var E2 = new AugmentFrenchGuy("nome2_");
+var E2b = new AugmentFrenchGuy("nome2B_");
+var E3 = new AugmentParisLover("nome3_");
+
+console.log(1.1, E1.nome + E2.nome + E2b.nome + E3.nome == testring[0])
+E2.nome = "Nam2changed_";
+console.log(1.2, E1.nome + E2.nome + E2b.nome + E3.nome == testring[1])
+
+console.log(2.1, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[2])
+E1.local = "local1_changed";
+E2.local = "local2_changed";
+E2b.local = "local2b_changed";
+E3.local = "local3_changed";
+console.log(2.2, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[3])
+
+E3.change();
+console.log(3.1, E1.getlocal() +' '+ E2.getlocal() +' '+ E2b.getlocal() +' '+ E3.getlocal() == testring[4])
+var E2c = new AugmentFrenchGuy("nome2B_");
+console.log(3.2, E2c.getlocal() == testring[5])
+
+E3.setAddress("Street3");
+console.log(4.1, E3.country + ' ' + E3.city + ' ' + E3.street + ',' == testring[6])
+E2.setAddress("City2", "Street2");
+console.log(4.2, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country + ' ' + E2.city + ' ' + E2.street == testring[7])
+E1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, E3.country + ' ' + E3.city + ' ' + E3.street + ',' + E2.country + ' ' + E2.city + ' ' + E2.street + ',' + E1.country + ' ' + E1.city + ' ' + E1.street == testring[8])
+
+console.log(5.1, (E1 instanceof AugmentPerson)+' '+ (E1 instanceof AugmentFrenchGuy) +' '+ (E1 instanceof AugmentParisLover))
+console.log(5.2, (E2 instanceof AugmentPerson)+' '+ (E2 instanceof AugmentFrenchGuy) +' '+ (E2 instanceof AugmentParisLover))
+console.log(5.3, (E3 instanceof AugmentPerson)+' '+ (E3 instanceof AugmentFrenchGuy) +' '+ (E3 instanceof AugmentParisLover))
+
+
+
+
+
+
+
+
+console.log("==============")
+console.log("dejavu ")
+console.log("==============")
+
+var F1 = new dejavuClassPerson2("nome1_");
+var F2 = new dejavuClassFrenchGuy2("nome2_");
+var F2b = new dejavuClassFrenchGuy2("nome2B_");
+var F3 = new dejavuClassParisLover2("nome3_");
+
+console.log(1.1, F1.nome + F2.nome + F2b.nome + F3.nome == testring[0])
+F2.nome = "Nam2changed_";
+console.log(1.2, F1.nome + F2.nome + F2b.nome + F3.nome == testring[1])
+
+console.log(2.1, F1.getlocal() +' '+ F2.getlocal() +' '+ F2b.getlocal() +' '+ F3.getlocal() == testring[2])
+F1.local = "local1_changed";
+F2.local = "local2_changed";
+F2b.local = "local2b_changed";
+F3.local = "local3_changed";
+console.log(2.2, F1.getlocal() +' '+ F2.getlocal() +' '+ F2b.getlocal() +' '+ F3.getlocal() == testring[3])
+
+F3.change();
+console.log(3.1, F1.getlocal() +' '+ F2.getlocal() +' '+ F2b.getlocal() +' '+ F3.getlocal() == testring[4])
+var F2c = new dejavuClassFrenchGuy2("nome2B_");
+console.log(3.2, F2c.getlocal() == testring[5])
+
+F3.setAddress("Street3");
+console.log(4.1, F3.country + ' ' + F3.city + ' ' + F3.street + ',' == testring[6])
+F2.setAddress("City2", "Street2");
+console.log(4.2, F3.country + ' ' + F3.city + ' ' + F3.street + ',' + F2.country + ' ' + F2.city + ' ' + F2.street == testring[7])
+F1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, F3.country + ' ' + F3.city + ' ' + F3.street + ',' + F2.country + ' ' + F2.city + ' ' + F2.street + ',' + F1.country + ' ' + F1.city + ' ' + F1.street == testring[8])
+
+console.log(5.1, (F1 instanceof dejavuClassPerson2)+' '+ (F1 instanceof dejavuClassFrenchGuy2) +' '+ (F1 instanceof dejavuClassParisLover2))
+console.log(5.2, (F2 instanceof dejavuClassPerson2)+' '+ (F2 instanceof dejavuClassFrenchGuy2) +' '+ (F2 instanceof dejavuClassParisLover2))
+console.log(5.3, (F3 instanceof dejavuClassPerson2)+' '+ (F3 instanceof dejavuClassFrenchGuy2) +' '+ (F3 instanceof dejavuClassParisLover2))
+
+
+
+
+
+
+
+console.log("==============")
+console.log("john resign ")
+console.log("==============")
+
+var G1 = new JRPerson("nome1_");
+var G2 = new JRFrenchGuy("nome2_");
+var G2b = new JRFrenchGuy("nome2B_");
+var G3 = new JRParisLover("nome3_");
+
+console.log(1.1, G1.nome + G2.nome + G2b.nome + G3.nome == testring[0])
+G2.nome = "Nam2changed_";
+console.log(1.2, G1.nome + G2.nome + G2b.nome + G3.nome == testring[1])
+
+console.log(2.1, G1.getlocal() +' '+ G2.getlocal() +' '+ G2b.getlocal() +' '+ G3.getlocal() == testring[2])
+G1.local = "local1_changed";
+G2.local = "local2_changed";
+G2b.local = "local2b_changed";
+G3.local = "local3_changed";
+console.log(2.2, G1.getlocal() +' '+ G2.getlocal() +' '+ G2b.getlocal() +' '+ G3.getlocal() == testring[3])
+
+G3.change();
+console.log(3.1, G1.getlocal() +' '+ G2.getlocal() +' '+ G2b.getlocal() +' '+ G3.getlocal() == testring[4])
+var G2c = new JRFrenchGuy("nome2B_");
+console.log(3.2, G2c.getlocal() == testring[5])
+
+G3.setAddress("Street3");
+console.log(4.1, G3.country + ' ' + G3.city + ' ' + G3.street + ',' == testring[6])
+G2.setAddress("City2", "Street2");
+console.log(4.2, G3.country + ' ' + G3.city + ' ' + G3.street + ',' + G2.country + ' ' + G2.city + ' ' + G2.street == testring[7])
+G1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, G3.country + ' ' + G3.city + ' ' + G3.street + ',' + G2.country + ' ' + G2.city + ' ' + G2.street + ',' + G1.country + ' ' + G1.city + ' ' + G1.street == testring[8])
+
+console.log(5.1, (G1 instanceof JRPerson)+' '+ (G1 instanceof JRFrenchGuy) +' '+ (G1 instanceof JRParisLover))
+console.log(5.2, (G2 instanceof JRPerson)+' '+ (G2 instanceof JRFrenchGuy) +' '+ (G2 instanceof JRParisLover))
+console.log(5.3, (G3 instanceof JRPerson)+' '+ (G3 instanceof JRFrenchGuy) +' '+ (G3 instanceof JRParisLover))
+
+
+
+
+
+console.log("==============")
+console.log(" CoffeScript ")
+console.log("==============")
+
+var H1 = new CoffeePerson("nome1_");
+var H2 = new CoffeeFrenchGuy("nome2_");
+var H2b = new CoffeeFrenchGuy("nome2B_");
+var H3 = new CoffeeParisLover("nome3_");
+
+console.log(1.1, H1.nome + H2.nome + H2b.nome + H3.nome == testring[0])
+H2.nome = "Nam2changed_";
+console.log(1.2, H1.nome + H2.nome + H2b.nome + H3.nome == testring[1])
+
+console.log(2.1, H1.getlocal() +' '+ H2.getlocal() +' '+ H2b.getlocal() +' '+ H3.getlocal() == testring[2])
+H1.local = "local1_changed";
+H2.local = "local2_changed";
+H2b.local = "local2b_changed";
+H3.local = "local3_changed";
+console.log(2.2, H1.getlocal() +' '+ H2.getlocal() +' '+ H2b.getlocal() +' '+ H3.getlocal() == testring[3])
+
+H3.change();
+console.log(3.1, H1.getlocal() +' '+ H2.getlocal() +' '+ H2b.getlocal() +' '+ H3.getlocal() == testring[4])
+var H2c = new CoffeeFrenchGuy("nome2B_");
+console.log(3.2, H2c.getlocal() == testring[5])
+
+H3.setAddress("Street3");
+console.log(4.1, H3.country + ' ' + H3.city + ' ' + H3.street + ',' == testring[6])
+H2.setAddress("City2", "Street2");
+console.log(4.2, H3.country + ' ' + H3.city + ' ' + H3.street + ',' + H2.country + ' ' + H2.city + ' ' + H2.street == testring[7])
+H1.setAddress("Country1", "City1", "Street1");
+console.log(4.3, H3.country + ' ' + H3.city + ' ' + H3.street + ',' + H2.country + ' ' + H2.city + ' ' + H2.street + ',' + H1.country + ' ' + H1.city + ' ' + H1.street == testring[8])
+
+console.log(5.1, (H1 instanceof CoffeePerson)+' '+ (H1 instanceof CoffeeFrenchGuy) +' '+ (H1 instanceof CoffeeParisLover))
+console.log(5.2, (H2 instanceof CoffeePerson)+' '+ (H2 instanceof CoffeeFrenchGuy) +' '+ (H2 instanceof CoffeeParisLover))
+console.log(5.3, (H3 instanceof CoffeePerson)+' '+ (H3 instanceof CoffeeFrenchGuy) +' '+ (H3 instanceof CoffeeParisLover))
+
+
+
+
+
+</script>
+

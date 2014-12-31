@@ -13,15 +13,27 @@ testring = [
 ]
 var inherit = function() {
     'use strict';
-    var len = arguments.length;
-    var parent = (len > 1) ? arguments[0] : function(){};
-    var body = arguments[len - 1];
 
-    body.prototype = Object.create(parent.prototype);
-    var prototype = new body(body.prototype);
-    if (prototype.constructor === undefined) prototype.constructor = function(){};
-    prototype.constructor.prototype = prototype;
-    return prototype.constructor;
+    function newfunction(){}
+
+    var o = 'object',
+        p = 'prototype',
+        c = 'constructor',
+        args = arguments,
+        parent = ( args.length > 1 ) ? args[0] : newfunction,
+        body = args[ args.length-1 ],
+        new_proto;
+
+
+    body[p] = Object.create( parent[p] ),
+    new_proto = new body( body[p] );
+
+    if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
+        new_proto[c] = newfunction;
+
+    new_proto[c][p] = new_proto;
+    return new_proto[c];
+
 };
 var augment = (function (bind, call) {
     "use strict";
@@ -49,7 +61,17 @@ var augment = (function (bind, call) {
 }(Function.bind, Function.call));
 
 
-
+function inherit_node(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object.create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+}
 
 
 Object.prototype.extend = function () {
