@@ -20,6 +20,8 @@ testring = [
 	* constructor
 	* constructor opcional
 	* instanceof
+	* inherit native functions
+    * inherit native functions as prototype definitions
  */
 
 
@@ -27,22 +29,25 @@ testring = [
 var inherit = function() {
 	'use strict';
 
-	function constructor(){}
 
 	var o = 'object',
 		p = 'prototype',
 		c = 'constructor',
 		s = '$super',
+		constructor = function(){},
 		args = arguments,
 		parent = ( args.length > 1 ) ? args[0] : constructor,
 		body = args[ args.length-1 ],
 		new_proto;
 
-console.log(step, args[0][p].hasOwnProperty(s), args[0].toString() ,args[0].prototype.constructor.toString())
-console.log('-------------------------------')
-	body[p] = Object.create( parent[p] ),
+//console.log(step)
+//console.log(parent[p].hasOwnProperty(s))
+//console.log('---')
+
+	body[p] = ( parent[p].hasOwnProperty(s) ) ? Object.create( parent[p] ) : new parent() ;
 	new_proto = new body( body[p] );
 	new_proto[s] = body[p];
+
 
 	if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
 		new_proto[c] = constructor;
@@ -56,57 +61,91 @@ console.log('-------------------------------')
 
 
 
-
-
-
 step=1
 var InheritPerson = inherit(function () {
 	this.local = "local1";
 	this.getlocal = function(){
 		return this.local + '---';
 	};
-    this.constructor = function(nome) {
-        this.nome = nome;
-    };
+	this.constructor = function(nome) {
+		this.nome = nome;
+	};
 	this.setAddress = function(country, city, street) {
 		this.country = country;
 		this.city = city;
 		this.street = street;
 	};
+	console.log(1)
 });
-step=2
-var InheritFrenchGuy = inherit((InheritPerson), function($super) {
-    this.local = "local2";
-    this.getlocal = function(){
-        return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
-    };
- 	this.constructor = function (nome) {
- 		//console.log( $super.constructor===this.$super.constructor)
-        $super.constructor.call(this, nome);
 
-    };
-    this.change = function(){
-       $super.local = "LOCAL2FROMCHILD_"
-    };
-    this.setAddress = function(city, street) {
-        $super.setAddress.call(this, "France", city, street);
-    };
+/*
+var InheritPerson = inherit({
+	local: "local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+});
+*/
+/*
+var InheritPerson = inherit(function () {
+	this.constructor = function(nome) {
+		this.nome = nome;
+	};
+});
+InheritPerson.prototype.local = "local1";
+InheritPerson.prototype.getlocal = function(){
+	return this.local + '---';
+};
+
+InheritPerson.prototype.setAddress = function(country, city, street) {
+	this.country = country;
+	this.city = city;
+	this.street = street;
+};
+*/
+step=2
+var InheritFrenchGuy = inherit(InheritPerson, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		//console.log( $super.constructor===this.$super.constructor)
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console.log(2)
 });
 step=3
 var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
-    this.local = "local3";
-    this.getlocal = function(){
-        return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
-    };
-    this.change = function(){
-        $super.local = "LOCAL2FROMCHILD_"
-    };
-    this.constructor= function (nome) {
-        $super.constructor.call(this, nome);
-    };
-    this.setAddress = function(street) {
-        $super.setAddress.call(this, "Paris", street);
-    };
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console.log(3)
 });
 
 
@@ -114,6 +153,7 @@ console.log("==============")
 console.log("inherit")
 console.log("==============")
 var A1 = new InheritPerson("nome1_");
+//var A1 = Object.create(InheritPerson);
 var A2 = new InheritFrenchGuy("nome2_");
 var A2b = new InheritFrenchGuy("nome2B_");
 var A3 = new InheritParisLover("nome3_");
