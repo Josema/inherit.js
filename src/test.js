@@ -12,7 +12,7 @@ testring = [
 
 
 
-// inherit v2.2
+// inherit v2.0
 // https://github.com/Josenzo/inherit.js
 /*
 	* private vars
@@ -20,13 +20,15 @@ testring = [
 	* constructor
 	* constructor opcional
 	* instanceof
-	* inherit native functions
-    * inherit native functions as prototype definitions
+	* inherit functions natively
+    * inherit functions natively as prototype definitions (Constructor cant be defined as YourClass.prototype.constructor)
+    * inherit objects
+    * inherit objects natively (no constructor, break the instanceof feature)
  */
 
 
 /*jslint newcap:true */ 
-var inherit = function() {
+var inherit = (function() {
 	'use strict';
 
 
@@ -34,34 +36,52 @@ var inherit = function() {
 		p = 'prototype',
 		c = 'constructor',
 		s = '$super',
-		constructor = function(){},
-		args = arguments,
-		parent = ( args.length > 1 ) ? args[0] : constructor,
-		body = args[ args.length-1 ],
+		constructor = new Function,
+		create = Object.create,
 		new_proto;
 
-//console.log(step)
-//console.log(parent[p].hasOwnProperty(s))
-//console.log('---')
 
-	body[p] = ( parent[p].hasOwnProperty(s) ) ? Object.create( parent[p] ) : new parent() ;
-	new_proto = new body( body[p] );
-	new_proto[s] = body[p];
+	return function() {
 
-
-	if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
-		new_proto[c] = constructor;
+		var args = arguments,
+			parent = ( args.length > 1 ) ? args[0] : constructor,
+			body = args[ args.length-1 ];
 
 
-	new_proto[c][p] = new_proto;
-	return new_proto[c];
+		body[p] = ( parent.hasOwnProperty(p) && parent[p].hasOwnProperty(s) ) ? 
+			create( parent[p] )
+		:
+			(typeof parent === o) ?
+				create( parent )
+			:
+				new parent();
 
-};
+
+		new_proto = (typeof body === o) ? body : new body( body[p] );
+		new_proto[s] = body[p];
+
+
+		if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
+			new_proto[c] = constructor;
+
+
+		new_proto[c][p] = new_proto;
+		return new_proto[c];
+
+	}
+
+})();
 
 
 
 
-step=1
+
+
+
+
+console.log("==============")
+console.log("1")
+console.log("==============")
 var InheritPerson = inherit(function () {
 	this.local = "local1";
 	this.getlocal = function(){
@@ -77,41 +97,6 @@ var InheritPerson = inherit(function () {
 	};
 	console.log(1)
 });
-
-/*
-var InheritPerson = inherit({
-	local: "local1",
-	getlocal: function(){
-		return this.local + '---';
-	},
-	constructor: function(nome) {
-		this.nome = nome;
-	},
-	setAddress: function(country, city, street) {
-		this.country = country;
-		this.city = city;
-		this.street = street;
-	}
-});
-*/
-/*
-var InheritPerson = inherit(function () {
-	this.constructor = function(nome) {
-		this.nome = nome;
-	};
-});
-InheritPerson.prototype.local = "local1";
-InheritPerson.prototype.getlocal = function(){
-	return this.local + '---';
-};
-
-InheritPerson.prototype.setAddress = function(country, city, street) {
-	this.country = country;
-	this.city = city;
-	this.street = street;
-};
-*/
-step=2
 var InheritFrenchGuy = inherit(InheritPerson, function($super) {
 	this.local = "local2";
 	this.getlocal = function(){
@@ -130,7 +115,7 @@ var InheritFrenchGuy = inherit(InheritPerson, function($super) {
 	};
 	console.log(2)
 });
-step=3
+
 var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
 	this.local = "local3";
 	this.getlocal = function(){
@@ -149,11 +134,9 @@ var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
 });
 
 
-console.log("==============")
-console.log("inherit")
-console.log("==============")
+
+
 var A1 = new InheritPerson("nome1_");
-//var A1 = Object.create(InheritPerson);
 var A2 = new InheritFrenchGuy("nome2_");
 var A2b = new InheritFrenchGuy("nome2B_");
 var A3 = new InheritParisLover("nome3_");
@@ -184,6 +167,11 @@ console.log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country
 console.log(5.1, (A1 instanceof InheritPerson)+' '+ (A1 instanceof InheritFrenchGuy) +' '+ (A1 instanceof InheritParisLover))
 console.log(5.2, (A2 instanceof InheritPerson)+' '+ (A2 instanceof InheritFrenchGuy) +' '+ (A2 instanceof InheritParisLover))
 console.log(5.3, (A3 instanceof InheritPerson)+' '+ (A3 instanceof InheritFrenchGuy) +' '+ (A3 instanceof InheritParisLover))
+
+
+
+
+
 
 
 

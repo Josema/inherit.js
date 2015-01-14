@@ -7,36 +7,52 @@ var A, B, a, d,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 
+
+/*jslint newcap:true */ 
 var inherit = (function() {
 	'use strict';
+
 
 	var o = 'object',
 		p = 'prototype',
 		c = 'constructor',
-		args,
-		parent,
-		body,
+		s = '$super',
+		constructor = new Function,
+		create = Object.create,
 		new_proto;
+
 
 	return function() {
 
-		function newfunction(){}
+		var args = arguments,
+			parent = ( args.length > 1 ) ? args[0] : constructor,
+			body = args[ args.length-1 ];
 
-		args = arguments,
-		parent = ( args.length > 1 ) ? args[0] : newfunction,
-		body = args[ args.length-1 ],
-		body[p] = Object.create( parent[p] ),
-		new_proto = new body( body[p] );
+
+		body[p] = ( parent.hasOwnProperty(p) && parent[p].hasOwnProperty(s) ) ? 
+			create( parent[p] )
+		:
+			(typeof parent === o) ?
+				create( parent )
+			:
+				new parent();
+
+
+		new_proto = (typeof body === o) ? body : new body( body[p] );
+		new_proto[s] = body[p];
+
 
 		if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
-			new_proto[c] = newfunction;
+			new_proto[c] = constructor;
+
 
 		new_proto[c][p] = new_proto;
 		return new_proto[c];
 
-	};
+	}
 
 })();
+
 
 
 testring = [
@@ -490,7 +506,7 @@ console.log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3
 A3.change();
 console.log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
 var A2c = new InheritFrenchGuy("nome2B_");
-console.log(3.2, A2c.getlocal() == testring[5])
+console.log(3.2, A2c.getlocal() , testring[5])
 
 A3.setAddress("Street3");
 console.log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
@@ -530,7 +546,7 @@ console.log(2.2, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ B3
 B3.change();
 console.log(3.1, B1.getlocal() +' '+ B2.getlocal() +' '+ B2b.getlocal() +' '+ B3.getlocal() == testring[4])
 var B2c = new AugmentFrenchGuy1("nome2B_");
-console.log(3.2, B2c.getlocal() == testring[5])
+console.log(3.2, B2c.getlocal() , testring[5])
 
 B3.setAddress("Street3");
 console.log(4.1, B3.country + ' ' + B3.city + ' ' + B3.street + ',' == testring[6])
