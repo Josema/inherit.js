@@ -45,11 +45,18 @@ var inherit = (function() {
 	return function() {
 
 		var args = arguments,
-			body = args[ args.length-1 ],
-			parent = ( args.length < 2 && body[p][c] === body ) ? 
+			body = args[ args.length-1 ], 
+			parent = ( args.length < 2 && body.hasOwnProperty(p) && body[p][c] === body ) ? 
 				new Function
 			:
 				args[0];
+
+try {
+	var bodyprot = create(body[p]);
+}
+catch(e) {
+	var bodyprot = undefined;
+}
 
 
 		body[p] = (typeof parent === o) ? 
@@ -61,7 +68,14 @@ var inherit = (function() {
 				new parent();
 
 
-		new_proto = (typeof body === o) ? body : new body( body[p] );
+		if (typeof body === o)
+			new_proto = body;
+		else if (bodyprot[c] !== body)
+			new_proto = bodyprot;
+		else
+			new_proto = new body( body[p] );
+
+
 		new_proto[s] = body[p];
 
 
@@ -529,20 +543,19 @@ var FrenchGuy = function($super){
 };
 FrenchGuy.prototype.local = "local2";
 FrenchGuy.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + Person.prototype.getlocal() + '---';
 };
 FrenchGuy.prototype.constructor = function (nome) {
-	this.$super.constructor.call(this, nome);
+	Person.prototype.constructor.call(this, nome);
 };
 FrenchGuy.prototype.change = function(){
    this.$super.local = "LOCAL2FROMCHILD_"
 };
 FrenchGuy.prototype.setAddress = function(city, street) {
-	this.$super.setAddress.call(this, "France", city, street);
+	Person.prototype.setAddress.call(this, "France", city, street);
 };
 FrenchGuy = inherit(Person, FrenchGuy);
-a = new FrenchGuy('paco')
-console.log(a.local)
+
 
 
 
@@ -552,16 +565,16 @@ var ParisLover = function($super){
 };
 ParisLover.prototype.local = "local3";
 ParisLover.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + FrenchGuy.prototype.getlocal() + '---';
 };
 ParisLover.prototype.change = function(){
 	this.$super.local = "LOCAL2FROMCHILD_"
 };
 ParisLover.prototype.constructor= function (nome) {
-	this.$super.constructor.call(this, nome);
+	FrenchGuy.prototype.constructor.call(this, nome);
 };
 ParisLover.prototype.setAddress = function(street) {
-	this.$super.setAddress.call(this, "Paris", street);
+	FrenchGuy.prototype.setAddress.call(this, "Paris", street);
 };
 ParisLover = inherit(FrenchGuy,ParisLover);
 
