@@ -48,6 +48,7 @@ var inherit = (function() {
 			body = args[ args.length-1 ];
 
 
+		//console.log(parent.__proto__.$super, parent.hasOwnProperty(p), parent[p].hasOwnProperty(s), typeof parent === o)
 		body[p] = ( parent.hasOwnProperty(p) && parent[p].hasOwnProperty(s) ) ? 
 			create( parent[p] )
 		:
@@ -55,6 +56,8 @@ var inherit = (function() {
 				create( parent )
 			:
 				new parent();
+
+		console.log(body[p].__proto__.constructor == parent.prototype.constructor)
 
 
 		new_proto = (typeof body === o) ? body : new body( body[p] );
@@ -79,10 +82,8 @@ var inherit = (function() {
 
 
 
-console.log("==============")
-console.log("1")
-console.log("==============")
-var InheritPerson = inherit(function () {
+
+var InheritPerson = (function () {
 	this.local = "local1";
 	this.getlocal = function(){
 		return this.local + '---';
@@ -167,6 +168,13 @@ console.log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country
 console.log(5.1, (A1 instanceof InheritPerson)+' '+ (A1 instanceof InheritFrenchGuy) +' '+ (A1 instanceof InheritParisLover))
 console.log(5.2, (A2 instanceof InheritPerson)+' '+ (A2 instanceof InheritFrenchGuy) +' '+ (A2 instanceof InheritParisLover))
 console.log(5.3, (A3 instanceof InheritPerson)+' '+ (A3 instanceof InheritFrenchGuy) +' '+ (A3 instanceof InheritParisLover))
+
+
+
+
+
+
+
 
 
 

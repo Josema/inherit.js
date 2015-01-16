@@ -1,5 +1,5 @@
 
-// inherit v2.0
+// inherit v2.1
 // https://github.com/Josenzo/inherit.js
 /*
 	* private vars
@@ -7,14 +7,16 @@
 	* constructor
 	* constructor opcional
 	* instanceof
-	* inherit functions natively
-	* inherit functions natively as prototype definitions (Constructor cant be defined as YourClass.prototype.constructor)
+	* inherit prototype definitios (constructor does not work well here)
+	* inherit classes natively
+	* inherit classes natively as prototype definitions
 	* inherit objects
 	* inherit objects natively (no constructor, break the instanceof feature)
  */
 
 
 /*jslint newcap:true */ 
+
 var inherit = (function() {
 	'use strict';
 
@@ -30,15 +32,15 @@ var inherit = (function() {
 	return function() {
 
 		var args = arguments,
-			parent = ( args.length > 1 ) ? args[0] : new Function,
-			body = args[ args.length-1 ];
+			body = args[ args.length-1 ],
+			parent = ( args.length < 2 && body[p][c] === body ) ? new Function : args[0];
 
 
-		body[p] = ( parent.hasOwnProperty(p) && parent[p].hasOwnProperty(s) ) ? 
-			create( parent[p] )
+		body[p] = (typeof parent === o) ? 
+			create( parent )
 		:
-			(typeof parent === o) ?
-				create( parent )
+			( parent[p].hasOwnProperty(s) )  ?
+				create( parent[p] )
 			:
 				new parent();
 
