@@ -33,7 +33,12 @@ var inherit = (function() {
 
 		var args = arguments,
 			body = args[ args.length-1 ],
-			parent = ( args.length < 2 && body[p][c] === body ) ? new Function : args[0];
+			bodyisobj = typeof body === o,
+			body_proto = (typeof body === o) ? undefined : create( body[p] ),
+			parent = ( args.length < 2 && (bodyisobj || body[p][c] === body) ) ? 
+				new Function
+			:
+				args[0];
 
 
 		body[p] = (typeof parent === o) ? 
@@ -45,7 +50,14 @@ var inherit = (function() {
 				new parent();
 
 
-		new_proto = (typeof body === o) ? body : new body( body[p] );
+		if (bodyisobj)
+			new_proto = body;
+		else if (body_proto[c] !== body)
+			new_proto = body_proto;
+		else
+			new_proto = new body( body[p] );
+
+
 		new_proto[s] = body[p];
 
 
