@@ -45,8 +45,9 @@ var inherit = (function() {
 	return function() {
 
 		var args = arguments,
-			body = args[ args.length-1 ], 
-			parent = ( args.length < 2 && body.hasOwnProperty(p) && body[p][c] === body ) ? 
+			body = args[ args.length-1 ],
+			bodyisobj = typeof body === o,
+			parent = ( args.length < 2 && (bodyisobj || body[p][c] === body) ) ? 
 				new Function
 			:
 				args[0];
@@ -68,7 +69,7 @@ catch(e) {
 				new parent();
 
 
-		if (typeof body === o)
+		if (bodyisobj)
 			new_proto = body;
 		else if (bodyprot[c] !== body)
 			new_proto = bodyprot;
