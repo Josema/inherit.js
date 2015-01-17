@@ -1,3 +1,20 @@
+
+// inherit v2.2
+// https://github.com/Josenzo/inherit.js
+/*
+    * private vars
+    * super
+    * constructor
+    * constructor opcional
+    * instanceof
+    * inherit functions natively
+    * inherit functions natively as prototype definitions (Constructor cant be defined as YourClass.prototype.constructor)
+    * inherit objects
+    * inherit objects natively (no constructor, break the instanceof feature)
+ */
+
+
+/*jslint newcap:true */ 
 var inherit = (function() {
     'use strict';
 
@@ -11,20 +28,11 @@ var inherit = (function() {
     newbody,
     property,
     merged,
-    merge = function(a, b) {
-        
-        merged = create(a);
-        for (property in b)
-            merged[property] = b[property];
-
-        return merged;
-
-    },
     convert = function(element, parent) {
 
         if (typeof element === o) {
             newbody = new Function;
-            newbody[p] = create( element );
+            newbody[p] = element;
         }
         else {
             newbody = element;
@@ -33,6 +41,15 @@ var inherit = (function() {
         }
 
         return newbody;
+
+    },
+    merge = function(a, b) {
+        
+        merged = create(a);
+        for (property in b)
+            merged[property] = b[property];
+
+        return merged;
 
     };
 
@@ -49,10 +66,12 @@ var inherit = (function() {
             body[p][c] = new Function;
 
         body[p][c][p] = merge( parent[p], body[p]);
-        body[p][c][p][s] = parent[p];
+        body[p][c][p][s] = create(parent[p]);
+
+        if (body[p][c][p][c] !== body[p][c])
+            body[p][c][p][c] = body[p][c];
 
         return body[p][c];
-
     }
 
 
@@ -95,3 +114,50 @@ console.log($a.public1, $b.public1, $b2.public1);
 
 // Testing methods
 console.log($a.getlocal(), $b.getlocal(), $b2.getlocal());
+
+
+
+var InheritPerson = inherit(function () {
+        this.constructor = function(name) {
+            this.name = name;
+        };
+        this.setAddress = function(country, city, street) {
+            this.country = country;
+            this.city = city;
+            this.street = street;
+        };
+    });
+    
+    var InheritFrenchGuy = inherit(InheritPerson, function($super) {
+            this.constructor = function (name) {
+              $super.constructor.call(this, name);
+            };
+       
+            this.setAddress = function(city, street) {
+              $super.setAddress.call(this, "France", city, street);
+            };
+    });
+    
+    var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
+        this.constructor= function (name) {
+            $super.constructor.call(this, name);
+        };
+       
+        this.setAddress = function(street) {
+            $super.setAddress.call(this, "Paris", street);
+            return this;
+        };
+    });
+
+
+
+var t1 = new InheritPerson("John");
+t1.setAddress("US", "MT", "CH");
+
+var t2 = new InheritFrenchGuy("Leo");
+t2.setAddress("MT", "CH");
+
+var t3 = new InheritParisLover("Mary");
+t3.setAddress("CH");
+
+console.log(t3.country, t3.city, t3.street)

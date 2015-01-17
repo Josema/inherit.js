@@ -486,7 +486,7 @@ var FrenchGuy = function($super){
 };
 FrenchGuy.prototype.local = "local2";
 FrenchGuy.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + Person.prototype.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
 };
 FrenchGuy.prototype.constructor = function (nome) {
 	Person.prototype.constructor.call(this, nome);
@@ -508,16 +508,16 @@ var ParisLover = function($super){
 };
 ParisLover.prototype.local = "local3";
 ParisLover.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + FrenchGuy.prototype.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
 };
 ParisLover.prototype.change = function(){
 	this.$super.local = "LOCAL2FROMCHILD_"
 };
 ParisLover.prototype.constructor= function (nome) {
-	FrenchGuy.prototype.constructor.call(this, nome);
+	this.$super.constructor.call(this, nome);
 };
 ParisLover.prototype.setAddress = function(street) {
-	FrenchGuy.prototype.setAddress.call(this, "Paris", street);
+	this.$super.setAddress.call(this, "Paris", street);
 };
 ParisLover = inherit(FrenchGuy,ParisLover);
 
@@ -589,7 +589,7 @@ var FrenchGuy = function($super){
 };
 FrenchGuy.prototype.local = "local2";
 FrenchGuy.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + Person.prototype.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
 };
 FrenchGuy.prototype.constructor = function (nome) {
 	Person.prototype.constructor.call(this, nome);
@@ -609,16 +609,16 @@ var ParisLover = function($super){
 };
 ParisLover.prototype.local = "local3";
 ParisLover.prototype.getlocal = function(){
-	return this.local + ' ' + this.$super.local + ',' + FrenchGuy.prototype.getlocal() + '---';
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
 };
 ParisLover.prototype.change = function(){
 	this.$super.local = "LOCAL2FROMCHILD_"
 };
 ParisLover.prototype.constructor= function (nome) {
-	FrenchGuy.prototype.constructor.call(this, nome);
+	this.$super.constructor.call(this, nome);
 };
 ParisLover.prototype.setAddress = function(street) {
-	FrenchGuy.prototype.setAddress.call(this, "Paris", street);
+	this.$super.setAddress.call(this, "Paris", street);
 };
 ParisLover = inherit(FrenchGuy,ParisLover);
 
@@ -997,10 +997,10 @@ var ParisLover = inherit(FrenchGuy, {
 		this.$super.local = "LOCAL2FROMCHILD_"
 	},
 	constructor: function (nome) {
-		this.$super.constructor(nome);
+		this.$super.constructor.call(this, nome);
 	},
 	setAddress: function(street) {
-		this.$super.setAddress("Paris", street);
+		this.$super.setAddress.call(this, "Paris", street);
 	}
 });
 

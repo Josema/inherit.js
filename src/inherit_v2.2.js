@@ -1,5 +1,5 @@
 
-// inherit v2.0
+// inherit v2.2
 // https://github.com/Josenzo/inherit.js
 /*
 	* private vars
@@ -28,20 +28,11 @@ var inherit = (function() {
 	newbody,
 	property,
 	merged,
-	merge = function(a, b) {
-		
-		merged = create(a);
-		for (property in b)
-			merged[property] = b[property];
-
-		return merged;
-
-	},
 	convert = function(element, parent) {
 
 		if (typeof element === o) {
 			newbody = new Function;
-			newbody[p] = create( element );
+			newbody[p] = element;
 		}
 		else {
 			newbody = element;
@@ -50,6 +41,15 @@ var inherit = (function() {
 		}
 
 		return newbody;
+
+	},
+	merge = function(a, b) {
+		
+		merged = create(a);
+		for (property in b)
+			merged[property] = b[property];
+
+		return merged;
 
 	};
 
@@ -66,7 +66,7 @@ var inherit = (function() {
 			body[p][c] = new Function;
 
 		body[p][c][p] = merge( parent[p], body[p]);
-		body[p][c][p][s] = parent[p];
+		body[p][c][p][s] = create(parent[p]);
 
 		if (body[p][c][p][c] !== body[p][c])
 			body[p][c][p][c] = body[p][c];
