@@ -28,13 +28,55 @@ testring = [
 
 
 
-// a={p1: 1, p2: 2, p3: 3};
-// b={p1: 4, p2: 5};
 
-// CLASS = inherit(a, b);
-// c = new CLASS;
-// console_log(c.p2, c.p3)
 
+var InheritPerson = inherit(function () {
+    this.constructor = function(name) {
+        this.name = name;
+    };
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
+    };
+});
+
+var InheritFrenchGuy = inherit(InheritPerson, function($super) {
+        this.constructor = function (name) {
+          $super.constructor(name);
+        };
+   
+        this.setAddress = function(city, street) {
+          $super.setAddress("France", city, street);
+        };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
+    this.constructor= function (name) {
+        $super.constructor(name);
+    };
+   
+    this.setAddress = function(street) {
+        $super.setAddress("Paris", street);
+        return this;
+    };
+});
+
+
+
+var t1 = new InheritPerson("John");
+t1.setAddress("US", "MT", "CH");
+
+var t2 = new InheritFrenchGuy("Leo");
+t2.setAddress("MT", "CH");
+
+var t3 = new InheritParisLover("Mary");
+t3.setAddress("CH");
+
+
+console.log(t1.country, t1.city, t1.street, t1.name)
+console.log(t2.country, t2.city, t2.street, t2.name)
+console.log(t3.country, t3.city, t3.street, t3.name)
 
 
 

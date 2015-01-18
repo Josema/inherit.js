@@ -20,23 +20,21 @@ var inherit = (function() {
 
 
 	var 
-	o = 'object',
 	p = 'prototype',
 	c = 'constructor',
-	s = '$super',
 	create = Object.create,
 	newbody,
 	property,
-	merged,
+	newobj,
 	convert = function(element, parent) {
 
-		if (typeof element === o) {
+		if (typeof element == 'object') {
 			newbody = new Function;
 			newbody[p] = element;
 		}
 		else {
 			newbody = element;
-			if ( !((element[p].hasOwnProperty(c) && element[p][c] !== element)))
+			if ( !(element[p].hasOwnProperty(c) && element[p][c] !== element ) )
 				newbody[p] = new element( parent );
 		}
 
@@ -45,11 +43,11 @@ var inherit = (function() {
 	},
 	merge = function(a, b) {
 		
-		merged = create(a);
+		newobj = create(a);
 		for (property in b)
-			merged[property] = b[property];
+			newobj[property] = b[property];
 
-		return merged;
+		return newobj;
 
 	};
 
@@ -57,16 +55,17 @@ var inherit = (function() {
 
 	return function() {
 
-		var args = arguments,
-			parent = convert( ( args.length == 1 ) ? {} : args[0] ),
-			body = convert( args[ args.length-1 ], create(parent[p]) );
+		var 
+		args = arguments,
+		parent = convert( ( args.length == 1 ) ? {} : args[0] ),
+		body = convert( args[ args.length-1 ], create(parent[p]) );
 
 
 		if ( !body[p].hasOwnProperty(c) )
 			body[p][c] = new Function;
 
 		body[p][c][p] = merge( parent[p], body[p]);
-		body[p][c][p][s] = create(parent[p]);
+		body[p][c][p].$super = create(parent[p]);
 
 		if (body[p][c][p][c] !== body[p][c])
 			body[p][c][p][c] = body[p][c];

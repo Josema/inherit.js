@@ -79,6 +79,17 @@ var inherit = (function() {
 })();
 
 
+function multi_inherit() {
+    var args = arguments;
+    if (args.length>2) {
+        Array.prototype.splice.call(arguments, 0, 2, inherit(args[0], args[1]));
+        return multi_inherit.apply(this, arguments);
+    }
+    else
+        return inherit(args[0], args[1]);
+}
+
+
 var Person = inherit(function () {
 
     this.local = "local1";
@@ -90,74 +101,41 @@ var Person = inherit(function () {
 
 });
 
-var FrenchGuy = inherit(Person, function($super) {
+var FrenchGuy = inherit(function($super) {
 
     this.local = "local2";
     this.public2 = "public2";
 
     this.getlocal = function(){
-        return this.local + '-' + $super.getlocal();
+        return this.local + '-' + $super.local;
     };
 
 });
 
-$a = new Person();
-$b = new FrenchGuy();
-$b2 = new FrenchGuy();
+var Multi = multi_inherit(Person, FrenchGuy, function($super) {
 
-// Testing public var
-console.log($a.public1, $b.public1, $b2.public1);
-$a.public1 = '$a';
-$b.public1 = '$b';
-$b2.public1 = '$b2';
-console.log($a.public1, $b.public1, $b2.public1);
+    this.local = "local3";
+    this.public3 = "public3";
 
-// Testing methods
-console.log($a.getlocal(), $b.getlocal(), $b2.getlocal());
+    this.constructor = function(){
+        console.log($super.getlocal());
+    }
 
+});
 
+$m = new Multi();
+console.log($m.local, $m.public1, $m.public2, $m.public3, $m.getlocal())
 
-var InheritPerson = inherit(function () {
-        this.constructor = function(name) {
-            this.name = name;
-        };
-        this.setAddress = function(country, city, street) {
-            this.country = country;
-            this.city = city;
-            this.street = street;
-        };
-    });
-    
-    var InheritFrenchGuy = inherit(InheritPerson, function($super) {
-            this.constructor = function (name) {
-              $super.constructor.call(this, name);
-            };
-       
-            this.setAddress = function(city, street) {
-              $super.setAddress.call(this, "France", city, street);
-            };
-    });
-    
-    var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
-        this.constructor= function (name) {
-            $super.constructor.call(this, name);
-        };
-       
-        this.setAddress = function(street) {
-            $super.setAddress.call(this, "Paris", street);
-            return this;
-        };
-    });
+// $a = new Person();
+// $b = new FrenchGuy();
+// $b2 = new FrenchGuy();
 
+// // Testing public var
+// console.log($a.public1, $b.public1, $b2.public1);
+// $a.public1 = '$a';
+// $b.public1 = '$b';
+// $b2.public1 = '$b2';
+// console.log($a.public1, $b.public1, $b2.public1);
 
-
-var t1 = new InheritPerson("John");
-t1.setAddress("US", "MT", "CH");
-
-var t2 = new InheritFrenchGuy("Leo");
-t2.setAddress("MT", "CH");
-
-var t3 = new InheritParisLover("Mary");
-t3.setAddress("CH");
-
-console.log(t3.country, t3.city, t3.street)
+// // Testing methods
+// console.log($a.getlocal(), $b.getlocal(), $b2.getlocal());
