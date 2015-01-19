@@ -1,48 +1,1090 @@
-
+<script src="inherit_v2.2.js"></script>
 <script>
-function extend() {
-    var len = arguments.length;
-    var parent = (len > 1) ? arguments[0] : Function.constructor;
-    var body = arguments[len - 1];
-    body.prototype = parent.prototype;
 
-    var constructor = new body;
-    constructor._super = parent.prototype;
-    if (!constructor.hasOwnProperty("init")) return body;
-    constructor.init.prototype = constructor;
-    return constructor.init;
+total=0;
+function console_log(){
+	for (i in arguments)
+		if (typeof arguments[i] === 'boolean' && arguments[i]===true)
+			total+=1;
+
+	console.log(arguments)
 }
 
-var A = extend(function (base) {
-    this.pro1 = 'pro1 ';
-    this.method1 = function() {
-        return this.pro1;
-    }
-    this.init = function(a) {
-        console.log("init1", a)
-        //this._super.init("caca")
-    }
-});
-var B = extend(A, function() {
-    this.pro2 = 'pro2 ';
-    this.init = function(a) {
-        console.log("init2", a)
-        this._super.init("caca")
+testring = [
+'nome1_nome2_nome2B_nome3_',
+'nome1_Nam2changed_nome2B_nome3_',
+'local1--- local2 local1,local1------ local2 local1,local1------ local3 local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed local2,local2 local1,local1---------',
+'local1_changed--- local2_changed local1,local1------ local2b_changed local1,local1------ local3_changed LOCAL2FROMCHILD_,LOCAL2FROMCHILD_ local1,local1---------',
+'local2 local1,local1------',
+'France Paris Street3,',
+'France Paris Street3,France City2 Street2',
+'France Paris Street3,France City2 Street2,Country1 City1 Street1',
+'true false false',
+'true true false',
+'true true true'
+]
+
+
+
+
+var InheritPerson = inherit(function () {
+    this.constructor = function(name) {
+        this.name = name;
     };
-    this.method2 = function() {
-        return this.pro1 + this.pro2;
+    this.setAddress = function(country, city, street) {
+        this.country = country;
+        this.city = city;
+        this.street = street;
     };
 });
-var C = extend(B, function() {
-    this.pro3 = 'pro3 ';
-    this.method3 = function() {
+
+var InheritFrenchGuy = inherit(InheritPerson, function($super) {
+        this.constructor = function (name) {
+          $super.constructor.call(this,name);
+        };
+   
+        this.setAddress = function(city, street) {
+          $super.setAddress.call(this,"France", city, street);
+        };
+});
+
+var InheritParisLover = inherit(InheritFrenchGuy, function($super) {
+    this.constructor= function (name) {
+        $super.constructor.call(this,name);
+    };
+   
+    this.setAddress = function(street) {
+        $super.setAddress.call(this, "Paris", street);
         return this;
     };
-    this.init = function(a) {
-        console.log("init3", a)
-        this._super.init("caca")
-    }
 });
-//c = new C("parameter of the constructor")
-ins=new C("parameter")
+
+
+
+var t1 = new InheritPerson("John");
+t1.setAddress("US", "MT", "CH");
+
+var t2 = new InheritFrenchGuy("Leo");
+t2.setAddress("MT", "CH");
+
+var t3 = new InheritParisLover("Mary");
+t3.setAddress("CH");
+
+
+console.log(t1.country, t1.city, t1.street, t1.name)
+console.log(t2.country, t2.city, t2.street, t2.name)
+console.log(t3.country, t3.city, t3.street, t3.name)
+
+
+
+console_log("=============================================")
+console_log("1 - inherit Person (normal function)")
+console_log("=============================================")
+var Person = inherit(function () {
+	this.local = "local1";
+	this.getlocal = function(){
+		return this.local + '---';
+	};
+	this.constructor = function(nome) {
+		this.nome = nome;
+	};
+	this.setAddress = function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	};
+	console_log(1)
+});
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("2 - no inherit Person (normal function)")
+console_log("=============================================")
+
+var Person = (function (nome) {
+	this.constructor = function(nome) {
+		this.nome = nome;
+	};
+	this.local = "local1";
+	this.getlocal = function(){
+		return this.local + '---';
+	};
+	this.setAddress = function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	};
+	this.constructor(nome);
+	console_log(1)
+});
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("3 - inherit Person (Person as prototype function)")
+console_log("=============================================")
+
+var Person = function (nome) {
+	//this.constructor(nome);
+	console_log(1)
+};
+Person.prototype.constructor = function(nome) {
+	this.nome = nome;
+};
+Person.prototype.local = "local1";
+Person.prototype.getlocal = function(){
+	return this.local + '---';
+};
+Person.prototype.setAddress = function(country, city, street) {
+	this.country = country;
+	this.city = city;
+	this.street = street;
+};
+Person = inherit(Person);
+
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("4 no inherit Person (Person as prototype function)")
+console_log("=============================================")
+
+var Person = function (nome) {
+	this.constructor(nome);
+	console_log(1)
+};
+Person.prototype.constructor = function(nome) {
+	this.nome = nome;
+};
+Person.prototype.local = "local1";
+Person.prototype.getlocal = function(){
+	return this.local + '---';
+};
+Person.prototype.setAddress = function(country, city, street) {
+	this.country = country;
+	this.city = city;
+	this.street = street;
+};
+
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("5 - inherit Person (everything as prototype)")
+console_log("=============================================")
+
+var Person = function (nome) {
+	this.constructor(nome);
+	console_log(1)
+};
+Person.prototype.constructor = function(nome) {
+	this.nome = nome;
+};
+Person.prototype.local = "local1";
+Person.prototype.getlocal = function(){
+	return this.local + '---';
+};
+Person.prototype.setAddress = function(country, city, street) {
+	this.country = country;
+	this.city = city;
+	this.street = street;
+};
+Person = inherit(Person);
+
+var FrenchGuy = function($super){
+	this.$super = $super;
+	console_log(2)
+};
+FrenchGuy.prototype.local = "local2";
+FrenchGuy.prototype.getlocal = function(){
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+};
+FrenchGuy.prototype.constructor = function (nome) {
+	Person.prototype.constructor.call(this, nome);
+};
+FrenchGuy.prototype.change = function(){
+   this.$super.local = "LOCAL2FROMCHILD_"
+};
+FrenchGuy.prototype.setAddress = function(city, street) {
+	Person.prototype.setAddress.call(this, "France", city, street);
+};
+FrenchGuy = inherit(Person, FrenchGuy);
+
+
+
+
+var ParisLover = function($super){
+	this.$super = $super;
+	console_log(3)
+};
+ParisLover.prototype.local = "local3";
+ParisLover.prototype.getlocal = function(){
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+};
+ParisLover.prototype.change = function(){
+	this.$super.local = "LOCAL2FROMCHILD_"
+};
+ParisLover.prototype.constructor= function (nome) {
+	this.$super.constructor.call(this, nome);
+};
+ParisLover.prototype.setAddress = function(street) {
+	this.$super.setAddress.call(this, "Paris", street);
+};
+ParisLover = inherit(FrenchGuy,ParisLover);
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("6 - no inherit Person (everything as prototype)")
+console_log("=============================================")
+
+var Person = function (nome) {
+	this.constructor(nome);
+	console_log(1)
+};
+Person.prototype.constructor = function(nome) {
+	this.nome = nome;
+};
+Person.prototype.local = "local1";
+Person.prototype.getlocal = function(){
+	return this.local + '---';
+};
+Person.prototype.setAddress = function(country, city, street) {
+	this.country = country;
+	this.city = city;
+	this.street = street;
+};
+
+
+var FrenchGuy = function($super){
+	this.$super = $super;
+	console_log(2)
+};
+FrenchGuy.prototype.local = "local2";
+FrenchGuy.prototype.getlocal = function(){
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+};
+FrenchGuy.prototype.constructor = function (nome) {
+	Person.prototype.constructor.call(this, nome);
+};
+FrenchGuy.prototype.change = function(){
+   this.$super.local = "LOCAL2FROMCHILD_"
+};
+FrenchGuy.prototype.setAddress = function(city, street) {
+	Person.prototype.setAddress.call(this, "France", city, street);
+};
+FrenchGuy = inherit(Person, FrenchGuy);
+
+
+var ParisLover = function($super){
+	this.$super = $super;
+	console_log(3)
+};
+ParisLover.prototype.local = "local3";
+ParisLover.prototype.getlocal = function(){
+	return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+};
+ParisLover.prototype.change = function(){
+	this.$super.local = "LOCAL2FROMCHILD_"
+};
+ParisLover.prototype.constructor= function (nome) {
+	this.$super.constructor.call(this, nome);
+};
+ParisLover.prototype.setAddress = function(street) {
+	this.$super.setAddress.call(this, "Paris", street);
+};
+ParisLover = inherit(FrenchGuy,ParisLover);
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("7 - inherit Person (Person as object)")
+console_log("=============================================")
+
+var Person = inherit({
+	local: "local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+});
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("8 - no inherit Person (Person as object)")
+console_log("=============================================")
+
+var Person = {
+	local: "local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+};
+var FrenchGuy = inherit(Person, function($super) {
+	this.local = "local2";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.constructor = function (nome) {
+		$super.constructor.call(this, nome);
+
+	};
+	this.change = function(){
+	   $super.local = "LOCAL2FROMCHILD_"
+	};
+	this.setAddress = function(city, street) {
+		$super.setAddress.call(this, "France", city, street);
+	};
+	console_log(2)
+});
+
+var ParisLover = inherit(FrenchGuy, function($super) {
+	this.local = "local3";
+	this.getlocal = function(){
+		return this.local + ' ' + $super.local + ',' + $super.getlocal() + '---';
+	};
+	this.change = function(){
+		$super.local = "LOCAL2FROMCHILD_"
+	};
+	this.constructor= function (nome) {
+		$super.constructor.call(this, nome);
+	};
+	this.setAddress = function(street) {
+		$super.setAddress.call(this, "Paris", street);
+	};
+	console_log(3)
+});
+
+
+
+var A1 = Object.create(Person);
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+//console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+//console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+//console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("9 - inherit Person (everything as object)")
+console_log("=============================================")
+
+var Personobj = {
+	local: "local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+};
+var Person = inherit(Personobj);
+
+var FrenchGuy = inherit(Person, {
+	local: "local2",
+	getlocal: function(){
+		return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	},
+	constructor: function (nome) {
+		Personobj.constructor.call(this, nome);
+
+	},
+	change: function(){
+	   this.$super.local = "LOCAL2FROMCHILD_"
+	   this.a=212;
+	},
+	setAddress: function(city, street) {
+		Personobj.setAddress.call(this, "France", city, street);
+	}
+});
+
+var ParisLover = inherit(FrenchGuy, {
+	local: "local3",
+	getlocal: function(){
+		return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	},
+	change: function(){
+		this.$super.local = "LOCAL2FROMCHILD_"
+	},
+	constructor: function (nome) {
+		this.$super.constructor.call(this, nome);
+	},
+	setAddress: function(street) {
+		this.$super.setAddress.call(this, "Paris", street);
+	}
+});
+
+
+
+var A1 = new Person("nome1_");
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+console_log(5.1, (A1 instanceof Person)+' '+ (A1 instanceof FrenchGuy) +' '+ (A1 instanceof ParisLover) == testring[9])
+console_log(5.2, (A2 instanceof Person)+' '+ (A2 instanceof FrenchGuy) +' '+ (A2 instanceof ParisLover) == testring[10])
+console_log(5.3, (A3 instanceof Person)+' '+ (A3 instanceof FrenchGuy) +' '+ (A3 instanceof ParisLover) == testring[11])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+console_log("=============================================")
+console_log("10 - no inherit Person (everything as object)")
+console_log("=============================================")
+
+var Person = {
+	local: "local1",
+	getlocal: function(){
+		return this.local + '---';
+	},
+	constructor: function(nome) {
+		this.nome = nome;
+	},
+	setAddress: function(country, city, street) {
+		this.country = country;
+		this.city = city;
+		this.street = street;
+	}
+};
+var FrenchGuy = inherit(Person, {
+	local: "local2",
+	getlocal: function(){
+		return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	},
+	constructor: function (nome) {
+		Person.constructor.call(this, nome);
+	},
+	change: function(){
+	   this.$super.local = "LOCAL2FROMCHILD_"
+	   this.a=212;
+	},
+	setAddress: function(city, street) {
+		Person.setAddress.call(this, "France", city, street);
+	}
+});
+
+var ParisLover = inherit(FrenchGuy, {
+	local: "local3",
+	getlocal: function(){
+		return this.local + ' ' + this.$super.local + ',' + this.$super.getlocal() + '---';
+	},
+	change: function(){
+		this.$super.local = "LOCAL2FROMCHILD_"
+	},
+	constructor: function (nome) {
+		this.$super.constructor.call(this, nome);
+	},
+	setAddress: function(street) {
+		this.$super.setAddress.call(this, "Paris", street);
+	}
+});
+
+
+
+var A1 = Object.create(Person);
+var A2 = new FrenchGuy("nome2_");
+var A2b = new FrenchGuy("nome2B_");
+var A3 = new ParisLover("nome3_");
+
+console_log(1.1, A1.nome + A2.nome + A2b.nome + A3.nome == testring[0])
+A2.nome = "Nam2changed_";
+console_log(1.2, A1.nome + A2.nome + A2b.nome + A3.nome == testring[1])
+
+console_log(2.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[2])
+A1.local = "local1_changed";
+A2.local = "local2_changed";
+A2b.local = "local2b_changed";
+A3.local = "local3_changed";
+console_log(2.2, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[3])
+
+A3.change();
+console_log(3.1, A1.getlocal() +' '+ A2.getlocal() +' '+ A2b.getlocal() +' '+ A3.getlocal() == testring[4])
+var A2c = new FrenchGuy("nome2B_");
+console_log(3.2, A2c.getlocal() == testring[5])
+
+A3.setAddress("Street3");
+console_log(4.1, A3.country + ' ' + A3.city + ' ' + A3.street + ',' == testring[6])
+A2.setAddress("City2", "Street2");
+console_log(4.2, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street == testring[7])
+A1.setAddress("Country1", "City1", "Street1");
+console_log(4.3, A3.country + ' ' + A3.city + ' ' + A3.street + ',' + A2.country + ' ' + A2.city + ' ' + A2.street + ',' + A1.country + ' ' + A1.city + ' ' + A1.street == testring[8])
+
+
+
+
+
+
+console.log(total)
 </script>
+
+
+
+
+
+
+

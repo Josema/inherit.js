@@ -1,47 +1,26 @@
-// inherit lite v1.1
-/*
-   * private vars
-   * super
-   * constructor
-   * constructor opcional
-   * instanceof
-   * inherit objects (inherit objects directly breaks the instanceof feature)
-   * inherit native functions
-   * inherit native functions as prototype definitions
- */
 
 
-/*jslint newcap:true */ 
 var inherit = function() {
-    'use strict';
+	'use strict';
 
-    var o = 'object',
-        p = 'prototype',
-        c = 'constructor',
-        newfunction = function(){},
-        args = arguments,
-        parent = args[0],
-        bodyclass = (args.length == 1) ? newfunction : args[1],
-        parentisobject = typeof parent === o,
-        body,
-        newproto,
-        hasconstructor;
+	function newfunction(){}
 
-    if (typeof bodyclass === o) {
-        body = newfunction;
-        body[p] = bodyclass;
-    }
-    else {
-        body = bodyclass;
-        body[p] = (parentisobject) ? parent : new parent();
-    }
+	var o = 'object',
+		p = 'prototype',
+		c = 'constructor',
+		args = arguments,
+		parent = ( args.length > 1 ) ? args[0] : newfunction,
+		body = args[ args.length-1 ],
+		new_proto;
 
-    newproto = new body(body[p]);
-    hasconstructor = !newproto.hasOwnProperty(c);
-    if ( (hasconstructor && parent === newproto[c]) || (hasconstructor && parentisobject) )
-    	newproto[c] = newfunction;
 
-    newproto[c][p] = newproto;
-    return newproto[c];
+	body[p] = Object.create( parent[p] ),
+	new_proto = new body( body[p] );
+
+	if ( !new_proto.hasOwnProperty(c) && parent === new_proto[c] )
+		new_proto[c] = newfunction;
+
+	new_proto[c][p] = new_proto;
+	return new_proto[c];
 
 };
