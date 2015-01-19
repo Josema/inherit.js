@@ -1,0 +1,23 @@
+{
+  "name": "inherit_js",
+  "version": "1.0.6",
+  "description": "Powerful, flexible, lighter and fast tool to make inheritance in javascript.",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Josenzo/inherit.js"
+  },
+  "keywords": [
+    "inheritance",
+    "prototypal",
+    "classes",
+    "extends"
+  ],
+  "author": "Josema Enzo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Josenzo/inherit.js/issues"
+  },
+  "homepage": "https://github.com/Josenzo/inherit.js"
+}

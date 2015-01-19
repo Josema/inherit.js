@@ -103,3 +103,8 @@ var inherit = (function() {
 
 
 })();
+
+
+// node.js
+if (typeof module == 'object')
+	module.exports = inherit;

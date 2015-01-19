@@ -1,0 +1,23 @@
+{
+  "name": "inherit.js",
+  "main": "src/inherit.min.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/Josenzo/inherit.js",
+  "authors": [
+    "Josenzo <enzo@josema.es>"
+  ],
+  "description": "Powerful, flexible, lighter and fast tool to make inheritance in javascript.",
+  "keywords": [
+    "inheritance",
+    "prototypal",
+    "classes",
+    "extends"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "testing"
+  ]
+}
