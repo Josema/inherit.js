@@ -45,7 +45,6 @@ var inherit = (function() {
 	var
 		merged,
 		property,
-		args,
 		parent,
 		body,
 		p = 'prototype',
@@ -84,7 +83,7 @@ var inherit = (function() {
 	// The function that process the inheritance
 	return function inherit_processor( first, second ) {
 
-		args = arguments;
+		var args = arguments;
 
 		// If are more of 2 arguments then we apply the process of multiinheritance
 		if (args.length > 2) {

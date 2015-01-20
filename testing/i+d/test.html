@@ -1,4 +1,4 @@
-<script src="inherit_v2.2.js"></script>
+<script src="../../src/inherit.js"></script>
 <script>
 
 total=0;
@@ -24,6 +24,17 @@ testring = [
 'true true false',
 'true true true'
 ]
+
+
+
+
+
+c = inherit({a: 0}, {b: 1}, 2, {testi: 1234});
+a = new c()
+console.log(a.propa);
+
+
+
 
 
 
