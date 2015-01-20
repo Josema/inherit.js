@@ -31,7 +31,7 @@
 
             https://github.com/Josenzo/inherit.js
             Copyright (c) 2015 Josema Enzo
- 			http://opensource.org/licenses/MIT
+            http://opensource.org/licenses/MIT
 
 */
 
