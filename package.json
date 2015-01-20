@@ -1,6 +1,6 @@
 {
   "name": "inheritjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Powerful, flexible, lighter and fast tool to make inheritance in javascript.",
   "main": "index.js",
   "devDependencies": {},

@@ -1,24 +1,40 @@
+/*                              
+                                        ys`
+                                        -Md
+                                         hM+
+                                         -MN`
+                                          yMs
+                                          .MM-
+                                           sMd
+                                           .NM/
+                                            sMm`
+         +dmmh                              `NMo
+        sMMMMh                               oMN.
+       `MMMMMs                               `NMy
+       :MMMMM+                                +MM:
+       sMMMMM:                                 mMm 
+       dMMMMM.                                 /MM+
+      `MMMMMM`                                  mMN`
+      /MMMMMm                                   /MMs
+      sMMMMMh                                    dMM-
+      mMMMMMy                     /:             :MMh
+     `MMMMMMy                    :MMs             mMM/
+     /MMMMMMd                    /MMM:            yMMm`
+     sMMMMMMM/                   :MMMd  ``...--::+NMMMo
+     mMMMMMMMMh+::://++oossyyyhhdmMMMMNMMMMMMMMMMMMMMMm
+     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMh
+     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNmdhyyso+/:-`
+     hMMMMMMMMMMMMMMMMMMMMMNmdhyso+/:-.`
+     `odNMMMNmdhyso+/:-.``
 
-/*
- * https://github.com/Josenzo/inherit.js
- * Copyright (c) 2015 Josema Enzo
- * http://opensource.org/licenses/MIT
+
+
+            https://github.com/Josenzo/inherit.js
+            Copyright (c) 2015 Josema Enzo
+ 			http://opensource.org/licenses/MIT
+
 */
 
-/*
- * private vars
- * super
- * constructor
- * optional constructor
- * instanceof
- * multi-inherit (breaks the instanceof feature)
- * inherit constructors natively
- * inherit constructors natively as prototype definitions
- * inherit objects
- * inherit objects natively (no constructor, break the instanceof feature)
- */
-
-//http://jsperf.com/performing-inherit-2-2
 
 
 
