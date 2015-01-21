@@ -45,6 +45,7 @@ var inherit = (function() {
 	var
 		merged,
 		property,
+		args,
 		parent,
 		body,
 		p = 'prototype',
@@ -83,14 +84,14 @@ var inherit = (function() {
 	// The function that process the inheritance
 	return function inherit_processor( first, second ) {
 
-		var args = arguments;
+		args = arguments;
 
 		// If are more of 2 arguments then we apply the process of multiinheritance
 		if (args.length > 2) {
 			// Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
 			Array.prototype.splice.call(args, 0, 2, inherit_processor(first, second));
 			// Recursion
-			return inherit_processor.apply(this, args);
+			return inherit_processor.apply(this, arguments);
 		}
 
 		parent = convert( (args.length == 1) ? {} : first );

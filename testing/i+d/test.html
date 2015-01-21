@@ -29,9 +29,9 @@ testring = [
 
 
 
-c = inherit({a: 0}, {b: 1}, 2, {testi: 1234});
+c = inherit({a: 0}, {b: 1}, {c:123}, {testi: 1234});
 a = new c()
-console.log(a.propa);
+console.log(a.c, a.a, a.testi);
 
 
 
