@@ -59,10 +59,16 @@ var inherit = (function() {
 		if (typeof element == 'object') {
 			body = new Function;
 			body[p] = element;
-		} else {
+		}
+		else {
 			body = element;
-			if (!(element[p].hasOwnProperty(c) && element[p][c] !== element))
-				body[p] = new element(parent);
+			// if the element (function) does not have defined the constructor in the prototype (element.prototype.constructor) then: 
+			if ( !(element[p].hasOwnProperty(c) && element[p][c] !== element) )
+				// If the constructor of the parent is defined
+				body[p] = (typeof parent == 'object') ?
+					new element( parent, parent[c] )
+				:
+					new element();
 		}
 
 		return body;
@@ -101,12 +107,12 @@ var inherit = (function() {
 		if ( !body[p].hasOwnProperty(c) )
 			body[p][c] = new Function;
 
-		// We parent.prototype and body.prototype into the prototype of the constructor of body
-		body[p][c][p] = merge(parent[p], body[p]);
+		// We merge parent.prototype and body.prototype into the prototype of the constructor of body
+		body[p][c][p] = merge( parent[p], body[p] );
 
 		// Usefull when the element given is an object and does not have $super
 		//if (typeof args[args.length - 1] == 'object' || args[args.length - 1][p][c] !== args[args.length - 1])
-		body[p][c][p].$super = create(parent[p]);
+		body[p][c].$super = create( parent[p] );
 
 		// Needed when the element given is an object and does not have any constructor defined.
 		// Without this definition when you create a instance the constructor will be the body itself instead of body.prototype.constructor
