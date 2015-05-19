@@ -1,9 +1,14 @@
-max = 3, int = setInterval(function() {
-    if ($('#run').innerHTML == "Run again" || $('#run').innerHTML == "Run tests") {
+fun = function() {
+    if ($('#run').html() == "Run again" || $('#run').html() == "Run tests") {
         if (n < max) {
-            console.log("Running", ++n);
-            setTimeout($('#run').click, 5000);
+            clearInterval(int);
+            setTimeout(function(){ 
+            	console.log("Running", ++n);
+            	$('#run').click();
+            	int = setInterval(fun, 5000);
+            }, 5000);
         } else clearInterval(int);
     }
 
-}, 1000), n = 0;
+};
+max = 10, int = setInterval(fun, 5000), n = 0;

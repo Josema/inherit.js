@@ -1,0 +1,203 @@
+<script type="text/javascript">
+	
+//https://github.com/Josenzo/inherit.js
+var inherit=function(){"use strict";function h(a,b){return"object"==typeof a?(d=new Function,d[e]=a):(d=a,a[e].hasOwnProperty(f)&&a[e][f]!==a||(d[e]="object"==typeof b?new a(b,b[f]):new a)),d}function i(c,d){a=g(c);for(b in d)a[b]=d[b];return a}var a,b,c,d,e="prototype",f="constructor",g=Object.create;return function j(a,b){var k=arguments;return k.length>2?(Array.prototype.splice.call(k,0,2,j(a,b)),j.apply(this,k)):(c=h(1==k.length?{}:a),d=h(k[k.length-1],g(c[e])),d[e].hasOwnProperty(f)||(d[e][f]=new Function),d[e][f][e]=i(c[e],d[e]),d[e][f].$super=g(c[e]),d[e][f][e][f]=d[e][f],d[e][f])}}();
+/*                              
+                                        ys`
+                                        -Md
+                                         hM+
+                                         -MN`
+                                          yMs
+                                          .MM-
+                                           sMd
+                                           .NM/
+                                            sMm`
+         +dmmh                              `NMo
+        sMMMMh                               oMN.
+       `MMMMMs                               `NMy
+       :MMMMM+                                +MM:
+       sMMMMM:                                 mMm 
+       dMMMMM.                                 /MM+
+      `MMMMMM`                                  mMN`
+      /MMMMMm                                   /MMs
+      sMMMMMh                                    dMM-
+      mMMMMMy                     /:             :MMh
+     `MMMMMMy                    :MMs             mMM/
+     /MMMMMMd                    /MMM:            yMMm`
+     sMMMMMMM/                   :MMMd  ``...--::+NMMMo
+     mMMMMMMMMh+::://++oossyyyhhdmMMMMNMMMMMMMMMMMMMMMm
+     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMh
+     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNmdhyyso+/:-`
+     hMMMMMMMMMMMMMMMMMMMMMNmdhyso+/:-.`
+     `odNMMMNmdhyso+/:-.``
+
+
+
+            https://github.com/Josenzo/inherit.js
+            Copyright (c) 2015 Josema Enzo
+            http://opensource.org/licenses/MIT
+
+*/
+
+
+
+
+var inherit = (function() {
+	'use strict';
+
+
+	var
+		merged,
+		property,
+		parent,
+		body,
+		p = 'prototype',
+		c = 'constructor',
+		create = Object.create; // Just an alias
+
+
+	// Return a new function/constructor with the methods and properties defined in the prototype
+	function convert(element, parent) {
+
+		if (typeof element == 'object') {
+			body = new Function;
+			body[p] = element;
+		}
+		else {
+			body = element;
+			// if the element (function) does not have defined the constructor in the prototype (element.prototype.constructor) then: 
+			if ( !(element[p].hasOwnProperty(c) && element[p][c] !== element) )
+				// If the constructor of the parent is defined
+				body[p] = (typeof parent == 'object') ?
+					new element( parent, parent[c] )
+				:
+					new element();
+		}
+
+		return body;
+	}
+
+	// Return a new object with the methods and the properties of both. b has priority over a, if both has the same
+	// method the new object will keep the method of b
+	function merge(a, b) {
+
+		merged = create(a);
+		for (property in b)
+			merged[property] = b[property];
+
+		return merged;
+
+	}
+
+
+	// The function that process the inheritance
+	return function inherit_processor( first, second ) {
+
+		var args = arguments;
+		// If are more of 2 arguments then we apply the process of multiinheritance
+		if (args.length > 2) {
+			// Remove the first 2 arguments of the arguments and add thoose arguments as merged at the begining
+			Array.prototype.splice.call(args, 0, 2, inherit_processor(first, second));
+			// Recursion
+			return inherit_processor.apply(this, args);
+		}
+
+		parent = convert( (args.length == 1) ? {} : first );
+		body = convert( args[args.length - 1], create(parent[p]) );
+
+		// This is needed when class does not have defined a constructor
+		if ( !body[p].hasOwnProperty(c) )
+			body[p][c] = new Function;
+
+		// We merge parent.prototype and body.prototype into the prototype of the constructor of body
+		body[p][c][p] = merge( parent[p], body[p] );
+
+		// Usefull when the element given is an object and does not have $super
+		//if (typeof args[args.length - 1] == 'object' || args[args.length - 1][p][c] !== args[args.length - 1])
+		body[p][c].$super = create( parent[p] );
+
+		// Needed when the element given is an object and does not have any constructor defined.
+		// Without this definition when you create a instance the constructor will be the body itself instead of body.prototype.constructor
+		//if (body[p][c][p][c] !== body[p][c])
+		body[p][c][p][c] = body[p][c];
+
+		return body[p][c];
+	};
+
+
+
+})();
+
+
+// node.js
+if (typeof module == 'object')
+	module.exports = inherit;
+
+
+
+
+
+
+
+
+
+
+// var Person = inherit(function(){});
+	// var Man = inherit(function(){});
+	// var Woman = inherit(function(){});
+		// var Hermaphrodite = inherit(function(){});
+			// var Sam = inherit(function(){});
+
+
+
+
+
+
+
+
+
+
+var Person = inherit(function(){
+	this.constructor = function(name) {
+		// console.log( 0, name );
+		this.name = name;
+	};
+	this.canSpeak = function() {
+		return true;
+	};
+});
+
+var Men = inherit(Person, function( $super ){
+	this.constructor = function(name) {
+		// console.log( 1, name );
+		$super.constructor.call(this, name );
+	};
+	this.hasPenis = function() {
+		return true;
+	};
+});
+
+var Woman = inherit(Person, function( $super ){
+	this.constructor = function(name) {
+		// console.log( 2, name );
+		$super.constructor.call(this, name );
+	};
+	this.canCalve = function() {
+		return true;
+	};
+});
+
+var Hermaphrodite = inherit(Men, function( $super ){
+	this.constructor = function(name) {
+		//console.log( 3, $super.constructor.toString() );
+		$super.constructor.call(this, name );
+	};
+});
+
+
+
+var me = new Hermaphrodite("Enzo");
+//console.log( me.name );   //undefined 'secret' 1234
+
+
+</script>
