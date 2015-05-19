@@ -49,7 +49,7 @@ console.log( me.canSpeak(), me.hasPenis() ); // true true
   - [Inherit Objects](#inherit-objects)
   - [Multi-inherit](#multi-inherit)
   - [Inherit constructor natively](#inherit-constructor-natively)
-  - [Inherit constructors natively as prototype definitions]()
+  - [Inherit constructors natively as prototype definitions](#inherit-constructors-natively-as-prototype-definitions)
   - [Not the most faster. But have a good performance http://jsperf.com/inherit-js-vs-other/8](http://jsperf.com/inherit-js-vs-other/8) 
   - Only 0.6 kb minified
 
